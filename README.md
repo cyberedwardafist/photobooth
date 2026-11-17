@@ -4,7 +4,7 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 
 ## 1. Supabase
 1. Buat project di supabase.com.
-2. SQL Editor, New query, tempel isi `supabase/schema.sql`, lalu Run. Ini membuat tabel `templates` dan `app_stats`, mengunci RLS, dan mengisi 5 template awal.
+2. Dari terminal: salin `.env.example` ke `.env.local`, isi `DATABASE_URL` (Project Settings, Database, Connection string URI), lalu jalankan `npm install` dan `npm run migrate`. Ini membuat tabel `templates` dan `app_stats`, mengunci RLS, dan mengisi 5 template awal. Aman dijalankan berulang. Alternatif tanpa terminal: tempel isi `supabase/schema.sql` di SQL Editor lalu Run.
 3. Project Settings, API: salin **Project URL** dan kunci **service_role**. Kunci ini rahasia, jangan dimasukkan ke file di `public/`.
 
 ## 2. Vercel
@@ -20,4 +20,3 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 - Sesi admin berupa cookie bertanda tangan (8 jam), tanpa penyimpanan di server.
 - Login gagal diberi jeda 0,8 detik. Untuk pembatasan percobaan yang lebih ketat, pasang rate limit di Vercel (Firewall).
 - Foto tidak pernah dikirim ke server. Yang dikirim hanya hitungan unduhan.
-# photobooth
