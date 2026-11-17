@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="Illustrated vintage photobooth with a blue curtain, glowing light and photo strips floating around it">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@600&amp;display=swap');
+@keyframes mp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes mp-twinkle{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.5);opacity:.5}}
+@keyframes mp-sway{0%,100%{transform:skewX(-1.3deg)}50%{transform:skewX(1.3deg)}}
+@keyframes mp-flash{0%,68%,100%{opacity:.55}76%{opacity:1}84%{opacity:.65}90%{opacity:.9}}
+@keyframes mp-blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes mp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes mp-print{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
+.mp-float{animation:mp-float 4.4s ease-in-out infinite}
+.mp-f2{animation-delay:-1.5s}
+.mp-f3{animation-delay:-3s}
+.mp-twinkle{animation:mp-twinkle 2.8s ease-in-out infinite}
+.mp-t2{animation-delay:-1s}
+.mp-t3{animation-delay:-1.9s}
+.mp-sway{transform-origin:0 290px;animation:mp-sway 5.5s ease-in-out infinite}
+.mp-sway2{animation-delay:-2.7s}
+.mp-flash{animation:mp-flash 4.6s ease-in-out infinite}
+.mp-blink{animation:mp-blink 1.6s ease-in-out infinite}
+.mp-d2{animation-delay:-.8s}
+.mp-pulse{animation:mp-pulse 2.2s ease-in-out infinite}
+.mp-print{animation:mp-print 3.6s ease-in-out infinite}
+.mp-float,.mp-twinkle,.mp-sway,.mp-flash,.mp-blink,.mp-pulse,.mp-print{animation:none}
+@media (prefers-reduced-motion: reduce){.mp-float,.mp-twinkle,.mp-sway,.mp-flash,.mp-blink,.mp-pulse,.mp-print{animation:none}}
+</style>
+
+<defs>
+<radialGradient id="mp-glow" cx="50%" cy="50%" r="50%">
+<stop offset="0" stop-color="#FFF6D6"></stop>
+<stop offset="0.5" stop-color="#FFEBC2" stop-opacity="0.65"></stop>
+<stop offset="1" stop-color="#FFEBC2" stop-opacity="0"></stop>
+</radialGradient>
+<clipPath id="mp-poster"><rect x="235" y="284" width="92" height="156"></rect></clipPath>
+<clipPath id="mp-open"><rect x="345" y="284" width="220" height="422"></rect></clipPath>
+<path id="mp-spark" d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"></path>
+<symbol id="mp-fa" viewBox="0 0 44 40">
+<rect width="44" height="40" fill="#9AD3F0"></rect>
+<path d="M4 40 Q22 18 40 40Z" fill="#E6A5C3"></path>
+<circle cx="22" cy="19" r="9.5" fill="#F2C29B"></circle>
+<path d="M12.5 18 A9.5 9.5 0 0 1 31.5 18 Q22 12 12.5 18Z" fill="#3B2A24"></path>
+<circle cx="18.5" cy="20" r="1.3" fill="#1E2D5A"></circle>
+<circle cx="25.5" cy="20" r="1.3" fill="#1E2D5A"></circle>
+<path d="M18 24 Q22 28 26 24" fill="none" stroke="#1E2D5A" stroke-width="1.5" stroke-linecap="round"></path>
+</symbol>
+<symbol id="mp-fb" viewBox="0 0 44 40">
+<rect width="44" height="40" fill="#F5E6D5"></rect>
+<path d="M4 40 Q22 18 40 40Z" fill="#5A8ADE"></path>
+<circle cx="22" cy="7.5" r="4.5" fill="#7A3E1D"></circle>
+<circle cx="22" cy="19" r="9.5" fill="#E7B48A"></circle>
+<path d="M12.5 18 A9.5 9.5 0 0 1 31.5 18 Q22 13 12.5 18Z" fill="#7A3E1D"></path>
+<circle cx="18.5" cy="20" r="1.3" fill="#1E2D5A"></circle>
+<circle cx="25.5" cy="20" r="1.3" fill="#1E2D5A"></circle>
+<path d="M18 23.5 Q22 30 26 23.5Z" fill="#1E2D5A"></path>
+</symbol>
+<symbol id="mp-fc" viewBox="0 0 44 40">
+<rect width="44" height="40" fill="#E6A5C3"></rect>
+<path d="M4 40 Q22 18 40 40Z" fill="#57A9B4"></path>
+<path d="M11 26 V17 A11 11 0 0 1 33 17 V26 Q30 14 22 13 Q14 14 11 26Z" fill="#1E2D5A"></path>
+<circle cx="22" cy="19.5" r="9" fill="#D9A07A"></circle>
+<path d="M13.5 17 Q22 11 30.5 17 Q22 14 13.5 17Z" fill="#1E2D5A"></path>
+<circle cx="18.5" cy="20.5" r="1.3" fill="#1E2D5A"></circle>
+<circle cx="25.5" cy="20.5" r="1.3" fill="#1E2D5A"></circle>
+<path d="M18 24.5 Q22 28.5 26 24.5" fill="none" stroke="#1E2D5A" stroke-width="1.5" stroke-linecap="round"></path>
+</symbol>
+<symbol id="mp-fd" viewBox="0 0 44 40">
+<rect width="44" height="40" fill="#BFE3E8"></rect>
+<path d="M4 40 Q22 18 40 40Z" fill="#1E2D5A"></path>
+<circle cx="22" cy="19" r="9.5" fill="#F2C29B"></circle>
+<path d="M12.5 17 A9.5 9.5 0 0 1 31.5 17 Q22 11 12.5 17Z" fill="#C97B2E"></path>
+<circle cx="18.5" cy="20" r="3.2" fill="none" stroke="#1E2D5A" stroke-width="1.3"></circle>
+<circle cx="25.5" cy="20" r="3.2" fill="none" stroke="#1E2D5A" stroke-width="1.3"></circle>
+<path d="M21.7 20 H22.3" stroke="#1E2D5A" stroke-width="1.3"></path>
+<path d="M18 25 Q22 28.5 26 25" fill="none" stroke="#1E2D5A" stroke-width="1.5" stroke-linecap="round"></path>
+</symbol>
+<symbol id="mp-strip" viewBox="0 0 58 188">
+<rect x="1.75" y="1.75" width="54.5" height="184.5" rx="5" fill="#FFF8EA" stroke="#1E2D5A" stroke-width="3.5"></rect>
+<use href="#mp-fa" x="7" y="8" width="44" height="40"></use>
+<use href="#mp-fb" x="7" y="52" width="44" height="40"></use>
+<use href="#mp-fc" x="7" y="96" width="44" height="40"></use>
+<use href="#mp-fd" x="7" y="140" width="44" height="40"></use>
+<rect x="7" y="8" width="44" height="40" fill="none" stroke="#1E2D5A" stroke-width="2"></rect>
+<rect x="7" y="52" width="44" height="40" fill="none" stroke="#1E2D5A" stroke-width="2"></rect>
+<rect x="7" y="96" width="44" height="40" fill="none" stroke="#1E2D5A" stroke-width="2"></rect>
+<rect x="7" y="140" width="44" height="40" fill="none" stroke="#1E2D5A" stroke-width="2"></rect>
+</symbol>
+</defs>
+
+<path d="M128 706 V350 A272 272 0 0 1 672 350 V706 Z" fill="#F5E6D5"></path>
+<path d="M110 706 V350 A290 290 0 0 1 690 350 V706" fill="none" stroke="#1E2D5A" stroke-width="5" stroke-linecap="round"></path>
+<path d="M128 706 V350 A272 272 0 0 1 672 350 V706" fill="none" stroke="#E6A5C3" stroke-width="6" stroke-linecap="round"></path>
+<ellipse cx="400" cy="714" rx="262" ry="14" fill="#1E2D5A" opacity="0.14"></ellipse>
+
+<g transform="translate(268 50) rotate(-18) scale(0.6)"><g class="mp-float mp-f2"><use href="#mp-strip" width="58" height="188"></use></g></g>
+<g transform="translate(528 46) rotate(15) scale(0.6)"><g class="mp-float mp-f3"><use href="#mp-strip" width="58" height="188"></use></g></g>
+
+<rect x="215" y="150" width="370" height="556" rx="16" fill="#FFF8EE" stroke="#1E2D5A" stroke-width="6" stroke-linejoin="round"></rect>
+<path d="M215 234 V166 A16 16 0 0 1 231 150 H569 A16 16 0 0 1 585 166 V234 Z" fill="#5A8ADE" stroke="#1E2D5A" stroke-width="6" stroke-linejoin="round"></path>
+<rect x="218" y="237" width="364" height="27" fill="#E6A5C3"></rect>
+<path d="M215 264 H585" stroke="#1E2D5A" stroke-width="5"></path>
+<text x="400" y="207" text-anchor="middle" font-family="Fredoka, Fraunces, Georgia, sans-serif" font-weight="600" font-size="38" letter-spacing="2" fill="#FFF8EE">PHOTOBOOTH</text>
+<text x="400" y="256" text-anchor="middle" font-family="Fredoka, Fraunces, Georgia, sans-serif" font-weight="600" font-size="14.5" letter-spacing="0.6" fill="#1E2D5A">Abadikan Momen Bahagiamu</text>
+<g stroke="#1E2D5A" stroke-width="2" fill="#FFEBC2">
+<circle class="mp-blink" cx="243" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="274.4" cy="162" r="5"></circle>
+<circle class="mp-blink" cx="305.8" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="337.2" cy="162" r="5"></circle>
+<circle class="mp-blink" cx="368.6" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="400" cy="162" r="5"></circle>
+<circle class="mp-blink" cx="431.4" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="462.8" cy="162" r="5"></circle>
+<circle class="mp-blink" cx="494.2" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="525.6" cy="162" r="5"></circle>
+<circle class="mp-blink" cx="557" cy="162" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="243" cy="222" r="5"></circle>
+<circle class="mp-blink" cx="274.4" cy="222" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="305.8" cy="222" r="5"></circle>
+<circle class="mp-blink" cx="337.2" cy="222" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="462.8" cy="222" r="5"></circle>
+<circle class="mp-blink" cx="494.2" cy="222" r="5"></circle>
+<circle class="mp-blink mp-d2" cx="525.6" cy="222" r="5"></circle>
+<circle class="mp-blink" cx="557" cy="222" r="5"></circle>
+</g>
+
+<rect x="235" y="284" width="92" height="200" rx="8" fill="#FFF8EA" stroke="#1E2D5A" stroke-width="4"></rect>
+<g clip-path="url(#mp-poster)">
+<rect x="236" y="300" width="64" height="15" rx="2" fill="#E6A5C3" transform="rotate(-24 268 308)"></rect>
+<rect x="276" y="322" width="56" height="14" rx="2" fill="#57A9B4" transform="rotate(-24 304 329)"></rect>
+<rect x="258" y="350" width="62" height="14" rx="2" fill="#5A8ADE" transform="rotate(38 289 357)"></rect>
+<rect x="234" y="376" width="62" height="14" rx="2" fill="#83C2F8" transform="rotate(-24 265 383)"></rect>
+<rect x="250" y="404" width="58" height="14" rx="2" fill="#1E2D5A" transform="rotate(40 279 411)"></rect>
+</g>
+<path d="M235 440 H327" stroke="#1E2D5A" stroke-width="3"></path>
+<text x="281" y="469" text-anchor="middle" font-family="Fredoka, Fraunces, Georgia, sans-serif" font-weight="600" font-size="19" letter-spacing="1" fill="#1E2D5A">SMILE!</text>
+
+<rect x="235" y="500" width="92" height="190" rx="8" fill="#57A9B4" stroke="#1E2D5A" stroke-width="4"></rect>
+<rect x="243" y="508" width="76" height="174" rx="5" fill="#7FC3CC" opacity="0.55"></rect>
+<text x="281" y="524" text-anchor="middle" font-family="Fredoka, Fraunces, Georgia, sans-serif" font-weight="600" font-size="10" letter-spacing="2" fill="#FFF8EE">PHOTOS</text>
+<rect x="250" y="530" width="62" height="14" rx="7" fill="#1B2A57"></rect>
+<g class="mp-print">
+<rect x="263" y="536" width="36" height="34" rx="3" fill="#FFF8EA" stroke="#1E2D5A" stroke-width="3"></rect>
+<use href="#mp-fb" x="267" y="540" width="28" height="26"></use>
+</g>
+<g transform="translate(281 604)">
+<circle r="18" fill="#E6A5C3" stroke="#1E2D5A" stroke-width="4"></circle>
+<rect x="-2.5" y="-9" width="5" height="18" rx="2.5" fill="#1E2D5A"></rect>
+</g>
+<g transform="translate(281 656)">
+<g class="mp-pulse">
+<circle r="14" fill="#E6A5C3" stroke="#1E2D5A" stroke-width="4"></circle>
+<circle cx="-4" cy="-4" r="3.5" fill="#FFFFFF" opacity="0.5"></circle>
+</g>
+</g>
+
+<rect x="345" y="284" width="220" height="422" fill="#22366B" stroke="#1E2D5A" stroke-width="5"></rect>
+<g clip-path="url(#mp-open)">
+<circle class="mp-flash" cx="455" cy="450" r="170" fill="url(#mp-glow)"></circle>
+</g>
+<rect x="450" y="612" width="10" height="78" fill="#4A6BB8"></rect>
+<ellipse cx="455" cy="694" rx="30" ry="7" fill="#4A6BB8"></ellipse>
+<path d="M415 602 V612 A40 9 0 0 0 495 612 V602Z" fill="#D98BAE" stroke="#1E2D5A" stroke-width="3.5" stroke-linejoin="round"></path>
+<ellipse cx="455" cy="602" rx="40" ry="9" fill="#E6A5C3" stroke="#1E2D5A" stroke-width="3.5"></ellipse>
+<rect x="345" y="614" width="40" height="92" fill="#57A9B4" stroke="#1E2D5A" stroke-width="4"></rect>
+<rect x="525" y="614" width="40" height="92" fill="#57A9B4" stroke="#1E2D5A" stroke-width="4"></rect>
+<rect x="353" y="624" width="8" height="72" rx="3" fill="#7FC3CC" opacity="0.6"></rect>
+<rect x="533" y="624" width="8" height="72" rx="3" fill="#7FC3CC" opacity="0.6"></rect>
+
+<g class="mp-sway">
+<path d="M347 292 H438 C434 350 450 392 432 444 C420 492 438 548 424 602 H347 Z" fill="#83C2F8" stroke="#1E2D5A" stroke-width="4" stroke-linejoin="round"></path>
+<path d="M372 298 C376 380 366 500 374 596" fill="none" stroke="#1E2D5A" stroke-width="4" opacity="0.18" stroke-linecap="round"></path>
+<path d="M404 298 C408 372 398 488 408 596" fill="none" stroke="#1E2D5A" stroke-width="4" opacity="0.18" stroke-linecap="round"></path>
+<path d="M388 302 C391 380 382 500 391 594" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.3" stroke-linecap="round"></path>
+<path d="M347 590 H425 L424 602 H347 Z" fill="#1E2D5A" opacity="0.22"></path>
+</g>
+<g class="mp-sway mp-sway2">
+<path d="M563 292 H472 C476 350 460 392 478 444 C490 492 472 548 486 602 H563 Z" fill="#83C2F8" stroke="#1E2D5A" stroke-width="4" stroke-linejoin="round"></path>
+<path d="M538 298 C534 380 544 500 536 596" fill="none" stroke="#1E2D5A" stroke-width="4" opacity="0.18" stroke-linecap="round"></path>
+<path d="M506 298 C502 372 512 488 502 596" fill="none" stroke="#1E2D5A" stroke-width="4" opacity="0.18" stroke-linecap="round"></path>
+<path d="M522 302 C519 380 528 500 519 594" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.3" stroke-linecap="round"></path>
+<path d="M563 590 H485 L486 602 H563 Z" fill="#1E2D5A" opacity="0.22"></path>
+</g>
+<path d="M338 290 H572" stroke="#1E2D5A" stroke-width="6" stroke-linecap="round"></path>
+<circle cx="338" cy="290" r="7" fill="#E6A5C3" stroke="#1E2D5A" stroke-width="3"></circle>
+<circle cx="572" cy="290" r="7" fill="#E6A5C3" stroke="#1E2D5A" stroke-width="3"></circle>
+<g fill="none" stroke="#E6A5C3" stroke-width="3.5">
+<circle cx="362" cy="290" r="5"></circle>
+<circle cx="392" cy="290" r="5"></circle>
+<circle cx="422" cy="290" r="5"></circle>
+<circle cx="488" cy="290" r="5"></circle>
+<circle cx="518" cy="290" r="5"></circle>
+<circle cx="548" cy="290" r="5"></circle>
+</g>
+
+<path d="M70 706 H730" stroke="#1E2D5A" stroke-width="5" stroke-linecap="round"></path>
+
+<g transform="translate(62 318) rotate(-13) scale(0.85)"><g class="mp-float"><use href="#mp-strip" width="58" height="188"></use></g></g>
+<g transform="translate(118 470) rotate(9) scale(0.72)"><g class="mp-float mp-f2"><use href="#mp-strip" width="58" height="188"></use></g></g>
+<g transform="translate(650 290) rotate(12) scale(0.85)"><g class="mp-float mp-f3"><use href="#mp-strip" width="58" height="188"></use></g></g>
+<g transform="translate(615 470) rotate(-9) scale(0.72)"><g class="mp-float"><use href="#mp-strip" width="58" height="188"></use></g></g>
+
+<g transform="translate(165 150) scale(1.2)"><use class="mp-twinkle" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(88 235) scale(0.7)"><use class="mp-twinkle mp-t2" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(400 98) scale(1.5)"><use class="mp-twinkle mp-t3" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(640 170)"><use class="mp-twinkle mp-t2" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(726 222) scale(0.7)"><use class="mp-twinkle" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(72 590) scale(0.8)"><use class="mp-twinkle mp-t3" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(738 590) scale(0.9)"><use class="mp-twinkle mp-t2" href="#mp-spark" fill="#5A8ADE"></use></g>
+<g transform="translate(225 100) scale(0.6)"><use class="mp-twinkle" href="#mp-spark" fill="#5A8ADE"></use></g>
+
+<circle cx="188" cy="205" r="5" fill="#E6A5C3"></circle>
+<circle cx="702" cy="420" r="5" fill="#5A8ADE"></circle>
+<circle cx="96" cy="660" r="4" fill="#E6A5C3"></circle>
+<circle cx="716" cy="660" r="4" fill="#E6A5C3"></circle>
+<rect x="598" y="116" width="16" height="6" rx="3" fill="#E6A5C3" transform="rotate(-30 606 119)"></rect>
+<rect x="164" y="300" width="16" height="6" rx="3" fill="#5A8ADE" transform="rotate(35 172 303)"></rect>
+<rect x="712" y="340" width="16" height="6" rx="3" fill="#E6A5C3" transform="rotate(30 720 343)"></rect>
+<rect x="190" y="620" width="16" height="6" rx="3" fill="#E6A5C3" transform="rotate(-25 198 623)"></rect>
+</svg>
