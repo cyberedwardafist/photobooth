@@ -136,3 +136,13 @@ nav a[aria-current=page]{background:rgba(255,255,255,.7)}
 .mp-pulse{animation:mp-pulse 2.2s ease-in-out infinite}
 .mp-print{animation:mp-print 3.6s ease-in-out infinite}
 .mp-float,.mp-twinkle,.mp-sway,.mp-flash,.mp-blink,.mp-pulse,.mp-print{animation:none}
+/* menu di layar sempit: logo di baris pertama, tautan di baris kedua */
+@media(max-width:700px){
+  nav{flex-wrap:wrap;gap:2px 8px;padding:10px 4vw}
+  nav .logo{font-size:22px}
+  .logo img{height:36px}
+  nav div{flex-wrap:wrap;gap:2px;width:100%}
+  nav a{padding:0 10px}
+  .hero{padding-top:132px}
+}
+@media(max-width:480px){.hero{padding-top:176px}}
