@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin photobooth</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2F5BB5;--sky:#83C2F8;--mist:#DBE2F8;--cream:#F5E6D5;--pink:#E6A5C3;--ink:#1E2D5A}
+*{box-sizing:border-box;margin:0}
+body{font:500 17px/1.6 Nunito,system-ui,sans-serif;color:var(--ink);background:var(--sky);min-height:100vh}
+h1,h2{font-family:Fredoka,Nunito,sans-serif;font-weight:600;line-height:1.15}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 20px;border:0;border-radius:12px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;text-decoration:none}
+.btn:hover{background:#264A95}
+.btn.alt{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.btn.alt:hover{background:var(--mist)}
+.card{background:#fff;border-radius:18px;padding:26px}
+.wrap{max-width:760px;margin:0 auto;padding:6vh 5vw}
+#login{max-width:420px;margin:0 auto}
+label{display:grid;gap:4px;font-weight:700;margin-bottom:14px}
+input[type=text],input[type=password]{min-height:46px;padding:0 12px;border:2px solid #7C8DBA;border-radius:10px;background:#fff}
+.err{background:#FBE3EE;border-radius:10px;padding:10px 14px;margin-bottom:14px}
+.err[hidden],[hidden]{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.top div{display:flex;gap:8px}
+.big{font:600 48px Fredoka,sans-serif}
+.tp{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:2px solid var(--mist);flex-wrap:wrap}
+.tp .dot{width:34px;height:34px;border-radius:8px;box-shadow:inset 0 0 0 2px var(--ink);display:grid;place-items:center;font:600 16px Fredoka,sans-serif}
+.tp b{flex:1;min-width:120px}
+.add{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.add label{margin:0}
+input[type=color]{min-height:46px;width:64px;padding:2px;border:2px solid #7C8DBA;border-radius:10px;background:#fff}
+.stack{display:grid;gap:18px}
+svg{display:block;margin:0 auto 14px}
+.train{animation:go 5s ease-in-out infinite alternate}
+@keyframes go{to{transform:translateX(70px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div id="login" class="card" hidden>
+    <svg width="220" height="70" viewBox="0 0 220 70" role="img" aria-label="Kereta kecil bolak-balik di rel">
+      <rect y="60" width="220" height="5" fill="#1E2D5A"/>
+      <g class="train"><rect x="10" y="22" width="70" height="34" rx="9" fill="#57A9B4"/><rect x="10" y="40" width="70" height="6" fill="#F5E6D5"/><rect x="48" y="27" width="26" height="12" rx="5" fill="#DBE2F8"/><circle cx="56" cy="33" r="2.5" fill="#1E2D5A"/><circle cx="67" cy="33" r="2.5" fill="#1E2D5A"/><circle cx="26" cy="58" r="5" fill="#1E2D5A"/><circle cx="62" cy="58" r="5" fill="#1E2D5A"/></g>
+    </svg>
+    <h1>Masuk admin</h1>
+    <form id="form" style="margin-top:18px">
+      <div class="err" id="err" role="alert" hidden></div>
+      <label>Nama pengguna<input type="text" id="u" autocomplete="username" required></label>
+      <label>Kata sandi<input type="password" id="p" autocomplete="current-password" required></label>
+      <button class="btn" id="go" type="submit" style="width:100%">Masuk</button>
+    </form>
+    <p style="margin-top:16px"><a href="index.html">Kembali ke photobooth</a></p>
+  </div>
+
+  <div id="dash" class="stack" hidden>
+    <div class="top"><h1>Admin photobooth</h1><div><a class="btn alt" href="index.html">Lihat situs</a><button class="btn" id="out">Keluar</button></div></div>
+    <div class="card"><p>Strip yang sudah diunduh</p><p class="big" id="dls">0</p></div>
+    <div class="card"><h2 style="margin-bottom:8px">Template</h2><div id="list"><p>Memuat template...</p></div></div>
+    <form class="card" id="addf"><h2 style="margin-bottom:14px">Tambah template</h2>
+      <div class="err" id="err2" role="alert" hidden></div>
+      <div class="add"><label>Nama<input type="text" id="n" maxlength="30" required></label><label>Latar<input type="color" id="b" value="#DBE2F8"></label><label>Teks<input type="color" id="i" value="#1E2D5A"></label><button class="btn" type="submit">Simpan template</button></div>
+    </form>
+  </div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const api=async(u,o={})=>{const r=await fetch(u,{headers:{'Content-Type':'application/json'},...o,body:o.body?JSON.stringify(o.body):undefined});const j=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error(j.error||'Terjadi kesalahan'),{status:r.status});return j};
+const show=d=>{$('#login').hidden=!!d;$('#dash').hidden=!d};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function draw(d){$('#dls').textContent=d.downloads;
+  $('#list').innerHTML=d.templates.length?d.templates.map(t=>`<div class="tp"><span class="dot" style="background:${t.bg};color:${t.ink}">Aa</span><b>${esc(t.name)}</b><button class="btn alt" data-a="${t.id}" data-v="${!t.active}">${t.active?'Sembunyikan':'Tampilkan'}</button><button class="btn alt" data-d="${t.id}">Hapus</button></div>`).join(''):'<p>Belum ada template. Tambahkan satu di bawah.</p>';
+  $('#list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(`/api/admin/templates/${b.dataset.a}`,{method:'PATCH',body:{active:b.dataset.v==='true'}}));
+  $('#list').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(confirm('Hapus template ini?'))act(`/api/admin/templates/${b.dataset.d}`,{method:'DELETE'})})}
+async function act(u,o){try{draw(await api(u,o))}catch(e){e.status===401?show(false):alert(e.message)}}
+async function boot(){try{draw(await api('/api/admin/data'));show(true)}catch{show(false)}}
+$('#form').onsubmit=async e=>{e.preventDefault();$('#err').hidden=true;$('#go').disabled=true;
+  try{await api('/api/admin/login',{method:'POST',body:{user:$('#u').value,pass:$('#p').value}});$('#p').value='';await boot()}
+  catch(x){$('#err').textContent=x.message;$('#err').hidden=false}$('#go').disabled=false};
+$('#addf').onsubmit=async e=>{e.preventDefault();$('#err2').hidden=true;
+  try{draw(await api('/api/admin/templates',{method:'POST',body:{name:$('#n').value.trim(),bg:$('#b').value,ink:$('#i').value}}));$('#n').value=''}
+  catch(x){$('#err2').textContent=x.message;$('#err2').hidden=false}};
+$('#out').onclick=async()=>{await api('/api/admin/logout',{method:'POST'}).catch(()=>{});show(false)};
+boot();
+</script>
+</body>
+</html>
