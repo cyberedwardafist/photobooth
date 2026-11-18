@@ -85,7 +85,7 @@ footer a{display:inline-flex;align-items:center;min-height:44px}
 .lays .chip svg{width:30px;height:30px;color:#7C8DBA}
 .lays .chip[aria-pressed=true] svg{color:var(--blue)}
 .scroll{max-height:380px;overflow-y:auto;padding:14px 20px 18px}
-.pb .scroll{max-height:540px;overflow-y:auto}
+.pb .scroll{max-height:none;overflow:visible}
 .pb .slots{--c:2;--r:3;--g:10px;--fit:480px;--min:165px;grid-template-columns:repeat(var(--c),1fr);gap:var(--g);width:min(100%,calc(var(--c)*max(var(--min),(var(--fit) - (var(--r) - 1)*var(--g))/var(--r)*4/3) + (var(--c) - 1)*var(--g)));margin:0 auto}
 .pb .slot{border-radius:16px;font-size:15px}
 .seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--mist)}
