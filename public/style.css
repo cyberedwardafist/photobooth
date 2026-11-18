@@ -107,3 +107,45 @@ nav a[aria-current=page]{background:rgba(255,255,255,.7)}
 .mini b{font:600 11px Fredoka,sans-serif;text-align:center}
 .tcard h3{font-size:18px}
 .msg{max-width:520px;margin:0 auto;text-align:center;display:grid;gap:14px;justify-items:center}
+
+/* logo & ilustrasi hero */
+.logo{display:inline-flex;align-items:center;gap:10px}
+.logo img{display:block;height:44px;width:auto}
+.hero-top{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;max-width:1200px;margin:0 auto}
+.hero-art{width:100%;max-width:480px;margin:0 auto}
+.booth-art{display:block;width:100%;height:auto;overflow:visible}
+@media(max-width:820px){.hero-top{grid-template-columns:1fr}.hero-art{max-width:340px}}
+@keyframes mp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes mp-twinkle{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.5);opacity:.5}}
+@keyframes mp-sway{0%,100%{transform:skewX(-1.3deg)}50%{transform:skewX(1.3deg)}}
+@keyframes mp-flash{0%,68%,100%{opacity:.55}76%{opacity:1}84%{opacity:.65}90%{opacity:.9}}
+@keyframes mp-blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes mp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes mp-print{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
+.mp-float{animation:mp-float 4.4s ease-in-out infinite}
+.mp-f2{animation-delay:-1.5s}
+.mp-f3{animation-delay:-3s}
+.mp-twinkle{animation:mp-twinkle 2.8s ease-in-out infinite}
+.mp-t2{animation-delay:-1s}
+.mp-t3{animation-delay:-1.9s}
+.mp-sway{transform-origin:0 290px;animation:mp-sway 5.5s ease-in-out infinite}
+.mp-sway2{animation-delay:-2.7s}
+.mp-flash{animation:mp-flash 4.6s ease-in-out infinite}
+.mp-blink{animation:mp-blink 1.6s ease-in-out infinite}
+.mp-d2{animation-delay:-.8s}
+.mp-pulse{animation:mp-pulse 2.2s ease-in-out infinite}
+.mp-print{animation:mp-print 3.6s ease-in-out infinite}
+.mp-float,.mp-twinkle,.mp-sway,.mp-flash,.mp-blink,.mp-pulse,.mp-print{animation:none}
+/* menu di layar sempit: logo di baris pertama, tautan di baris kedua */
+@media(max-width:700px){
+  nav{flex-wrap:wrap;gap:2px 8px;padding:10px 4vw}
+  nav .logo{font-size:22px}
+  .logo img{height:36px}
+  nav div{flex-wrap:wrap;gap:2px}
+  nav a{padding:0 10px}
+  .hero{padding-top:104px}
+}
+@media(max-width:389px){.hero{padding-top:132px}}
+/* logo hanya hiasan: tidak bisa diklik, dipilih, atau diseret */
+.logo{cursor:default;user-select:none;-webkit-user-select:none}
+.logo img{pointer-events:none;-webkit-user-drag:none}

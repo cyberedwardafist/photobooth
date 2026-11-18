@@ -1,13 +1,7 @@
 // Menjalankan supabase/schema.sql ke database Supabase. Aman dijalankan berulang (skema idempoten).
 const fs = require('fs');
 const path = require('path');
-let Client;
-try {
-  ({ Client } = require('pg'));
-} catch {
-  console.error('Paket "pg" belum terpasang. Jalankan: npm install');
-  process.exit(1);
-}
+const { Client } = require('pg');
 
 for (const f of ['.env.local', '.env']) {
   const p = path.join(__dirname, '..', f);
