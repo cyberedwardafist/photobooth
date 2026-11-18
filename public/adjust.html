@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atur foto | photobooth</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="in"><a class="logo" href="index.html">photobooth</a><div><a href="index.html">Home</a><a href="template.html">Template</a></div></nav>
+<section class="editwrap pgsec">
+  <ol class="steps" aria-label="Langkah"><li><b>1</b>Foto</li><li aria-current="step"><b>2</b>Atur foto</li><li><b>3</b>Frame</li><li><b>4</b>Unduh</li></ol>
+  <div class="head"><h2>Atur hasil tiap foto</h2><p>Pilih satu foto, lalu atur filter, kecerahan, kontras, dan saturasinya. Frame dipilih di langkah berikutnya.</p></div>
+  <div class="msg" id="msg"><p id="msgT">Memuat foto...</p><a class="btn" id="msgA" href="foto.html" hidden>Ambil foto dulu</a></div>
+  <div class="adj" id="ui" hidden>
+    <div class="adjview">
+      <div class="bigwrap"><canvas id="big" width="640" height="480" aria-label="Pratinjau foto yang dipilih"></canvas></div>
+      <div class="thumbs" id="thumbs" role="group" aria-label="Pilih foto"></div>
+    </div>
+    <div class="panel">
+      <h3>Filter foto <span class="muted" id="who"></span></h3><div class="row" id="fil"></div>
+      <p class="note" id="filNote" hidden>Peramban ini belum mendukung filter dan penyesuaian foto.</p>
+      <div class="sliders" id="sl"></div>
+      <div class="row"><button class="btn alt" id="reset">Atur ulang foto ini</button><button class="btn alt" id="all">Terapkan ke semua foto</button></div>
+      <a class="btn big" id="next" href="edit.html">Lanjutkan: pilih frame</a>
+      <a class="btn alt big" href="foto.html">Ubah foto</a>
+    </div>
+  </div>
+</section>
+<footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
+<script src="common.js"></script>
+<script src="adjust.js"></script>
+</body>
+</html>

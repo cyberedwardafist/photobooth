@@ -20,3 +20,11 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 - Sesi admin berupa cookie bertanda tangan (8 jam), tanpa penyimpanan di server.
 - Login gagal diberi jeda 0,8 detik. Untuk pembatasan percobaan yang lebih ketat, pasang rate limit di Vercel (Firewall).
 - Foto tidak pernah dikirim ke server. Yang dikirim hanya hitungan unduhan.
+
+## Alur halaman
+1. `foto.html` ambil atau unggah foto.
+2. `adjust.html` atur tiap foto sendiri-sendiri: filter, kecerahan, kontras, saturasi (tanpa frame). Ada tombol "Terapkan ke semua foto".
+3. `edit.html` pilih frame: template dan warna latar.
+4. `unduh.html` pratinjau akhir dan unduh PNG.
+
+Pengaturan per foto disimpan di `sessionStorage` (`adj`), dan otomatis di-reset kalau fotonya diambil ulang.
