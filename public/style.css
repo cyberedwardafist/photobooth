@@ -108,7 +108,3 @@ nav a[aria-current=page]{background:rgba(255,255,255,.7)}
 .mini b{font:600 11px Fredoka,sans-serif;text-align:center}
 .tcard h3{font-size:18px}
 .msg{max-width:520px;margin:0 auto;text-align:center;display:grid;gap:14px;justify-items:center}
-
-.btnrow{display:flex;gap:10px}
-.btnrow .btn{flex:1;padding:0 12px}
-@media(max-width:420px){.btnrow{flex-direction:column}}
