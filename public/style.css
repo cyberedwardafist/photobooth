@@ -200,7 +200,6 @@ dialog{margin:auto}
 @keyframes inR{from{opacity:.2;transform:translateX(48px)}to{opacity:1;transform:none}}
 @keyframes inL{from{opacity:.2;transform:translateX(-48px)}to{opacity:1;transform:none}}
 #lcv.inR{animation:inR .22s ease-out}#lcv.inL{animation:inL .22s ease-out}
-@media(max-width:560px){.lnav{position:absolute;bottom:48px;width:46px;height:46px;z-index:2}#lPrev{left:16px}#lNext{right:16px}#lcv{max-width:100%}.lstage{position:relative}}
 
 /* filter frame */
 .ffilter{position:sticky;top:0;z-index:6;max-width:1150px;margin:0 auto 16px;padding:12px 0;background:var(--mist);display:grid;gap:10px}
@@ -213,3 +212,62 @@ dialog{margin:auto}
 .fsearch input{flex:1;min-width:180px;max-width:360px;min-height:44px;padding:0 14px;border:2px solid #fff;border-radius:10px;background:#fff}
 .fsearch input:focus-visible{border-color:var(--blue)}
 #fempty{max-width:1150px;margin:0 auto 16px}
+
+/* ===== khusus HP ===== */
+.dm{display:inline}
+@media(max-width:600px){
+ body{font-size:16px}
+ nav{padding:6px 4vw}nav .logo{font-size:22px}nav a{padding:0 10px;min-height:40px}
+ section{padding:18px 4vw 26px}.pgsec{min-height:0}
+ .steps{flex-wrap:nowrap;gap:6px;margin-bottom:12px;overflow-x:auto;font-size:14px}
+ .steps li{flex:none;min-height:34px;padding:0 12px 0 4px}
+ .steps li:not([aria-current=step]){padding:0 4px}
+ .steps li:not([aria-current=step]) span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ .head{margin-bottom:14px}.head h2{font-size:25px;margin-bottom:4px}.head p{font-size:15px;line-height:1.45}
+ #booth .head p{display:none}
+ footer{padding:22px 4vw}
+ /* foto */
+ .booth{gap:12px}.stage{border-radius:14px}.count{font-size:90px}
+ .panel{border-radius:14px}.sec{padding:12px 14px}
+ .lays{gap:4px}.lays .chip{min-height:54px;font-size:12px}.lays .chip svg{width:26px;height:26px}
+ .pb .slots{grid-template-columns:repeat(4,1fr);width:100%;gap:8px}
+ .pb .slot{border-radius:10px;font-size:12px}
+ .btn.big{min-height:48px}
+ /* atur foto: foto tetap terlihat saat slider digeser */
+ .adj{gap:12px}
+ .adjview{position:sticky;top:0;z-index:5;gap:8px;margin:0 -4vw;padding:6px 4vw 8px;background:var(--mist)}
+ .bigwrap{padding:6px;display:grid;place-items:center}
+ #big{width:auto;max-width:100%;height:min(32vh,70vw);aspect-ratio:4/3}
+ .thumbs{display:flex;overflow-x:auto;gap:6px;padding-bottom:2px}.thumb{flex:none;width:60px}
+ /* pilih frame */
+ .fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:96px}
+ .fcard{padding:8px;gap:6px;border-width:2px;border-radius:12px}.fprev{padding:5px}.fname{font-size:14px}
+ .fcard[aria-pressed=true]::after{top:4px;right:4px;width:24px;height:24px;background-size:15px}
+ .ffilter{margin:0 -4vw 12px;padding:8px 4vw;max-width:none;gap:8px}
+ .ffilter .chip{min-height:40px;padding:0 12px;font-size:15px}
+ .fsearch{flex-wrap:nowrap;gap:10px}.fsearch input{min-width:0;min-height:40px}
+ .actbar{bottom:8px;padding:10px 12px;border-radius:14px;gap:8px}
+ .actbar p{width:100%;display:flex;gap:6px;align-items:baseline}.actbar b{font-size:17px}
+ .actbar .row{width:100%;flex-wrap:nowrap}.actbar .btn{flex:1;padding:0 10px;font-size:15px}
+ .dm{display:none}
+ /* unduh */
+ .toolbar{padding:12px 14px;gap:10px;margin-bottom:16px}.toolbar .row{width:100%}.toolbar .btn{flex:1;padding:0 10px;font-size:15px}
+ .toolbar #open{order:-1;flex-basis:100%}
+ .rsec{margin-bottom:20px}.rsec h3{font-size:19px;margin-bottom:8px}
+ .rgrid,.rgrid.tall{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .rcard{padding:8px;border-width:2px;border-radius:12px}.rprev{padding:5px;min-height:0;margin-bottom:2px}.rname{font-size:15px}.rsub{display:none}
+ .badge{top:8px;left:8px;font-size:11px;padding:0 8px}
+ /* dialog */
+ dialog{width:96vw;max-height:94vh;border-radius:16px}
+ .dhead{padding:10px 14px}.dhead h3{font-size:18px}
+ .dbody{gap:12px;padding:12px 14px;max-height:calc(94vh - 64px)}
+ .dprev{padding:8px;gap:6px}#dcv{max-height:24vh}
+ #go{position:sticky;bottom:0;z-index:2;box-shadow:0 -10px 10px #fff}
+ .lhead{padding:10px 14px}.lhead b{font-size:18px}
+ .lstage{display:grid;grid-template-columns:1fr 1fr;gap:10px;justify-items:center;min-height:0;padding:4px 12px 8px}
+ #lcv{grid-column:1/-1;grid-row:1;max-width:100%;max-height:62vh}
+ .lnav{position:static;grid-row:2;width:48px;height:48px}#lPrev{justify-self:start}#lNext{justify-self:end}
+ .lhint{padding-bottom:10px}
+ .tgrid{gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tcard{padding:10px}.tcard .btn{padding:0 8px;font-size:15px;white-space:nowrap}
+}
