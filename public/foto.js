@@ -70,7 +70,7 @@ moveStage();
 
 function rrect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 /* Connect: gabungkan kamera semua orang di ruang dalam satu frame (latar dari kamera yang dipilih, kamera lain jadi kotak di depannya) */
-let room=null,mixOn=false,bgId='me';const vids=new Map();
+let room=null,mixOn=false,bgId='me',autoMix=false;const vids=new Map();
 const mixC=$('#mix'),mx=mixC.getContext('2d');mixC.width=640;mixC.height=480;
 function vidFor(id){if(id==='me')return $('#cam');const m=room&&room.members.get(id);if(!m||!m.stream)return null;let v=vids.get(id);
   if(!v||v.srcObject!==m.stream){v=document.createElement('video');v.muted=true;v.playsInline=true;v.srcObject=m.stream;v.play().catch(()=>{});vids.set(id,v)}return v}
@@ -85,8 +85,8 @@ function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(
   requestAnimationFrame(mixLoop)}
 function fillSel(){if(!room)return;const s=$('#bgsel'),ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
   s.innerHTML=ids.map(k=>`<option value="${k}">${k==='me'?'Kameraku':esc((room.members.get(k)||{}).name||'Teman')}</option>`).join('');s.value=ids.includes(bgId)?bgId:'me';
-  const n=ids.length-1;$('#cinfo').textContent=n?`${n} teman terhubung`:'Menunggu teman terhubung...';$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false)}
-function setMix(on){mixOn=on;$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on)mixLoop()}
+  const n=ids.length-1;$('#cinfo').textContent=n?`${n} teman terhubung`:'Menunggu teman terhubung...';$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false);if(n&&!autoMix){autoMix=true;setMix(true)}}
+function setMix(on){mixOn=on;$('#mixbtn').textContent=on?'Kamera digabung (klik untuk matikan)':'Gabung kamera';$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on)mixLoop()}
 async function initRoom(){const info=roomGet();if(!info)return;$('#cbar').hidden=false;$('#ccode').textContent=info.code;
   room=await openRoom({...info,fresh:false},stream,{onChange:R=>{room=R;fillSel()},onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
 $('#mixbtn').onclick=()=>setMix(!mixOn);$('#bgsel').onchange=e=>{bgId=e.target.value};
