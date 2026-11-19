@@ -33,7 +33,7 @@ function build(){const {imgs,adj,lay}=S,n=imgs.length,anyClip=clips.some(Boolean
 /* galeri */
 function cardEl(it){const b=document.createElement('button');b.className='rcard'+(it.ok?'':' off');b.dataset.id=it.id;
   b.innerHTML=`<span class="rprev">${it.ok?'<canvas aria-hidden="true"></canvas>':`<span class="why">${esc(it.why)}</span>`}${it.ok?`<i class="badge">${it.tag}</i>`:''}</span><span class="rname">${esc(it.label)}</span><span class="rsub">${esc(it.sub)}</span>`;
-  if(it.ok){b.onclick=()=>openDlg(it);const cv=b.querySelector('canvas');it.paint(cv,0,it.ps);if(it.anim&&!reduce)cards.push({it,cv,vis:true})}
+  if(it.ok){b.onclick=()=>openView(it);const cv=b.querySelector('canvas');it.paint(cv,0,it.ps);if(it.anim&&!reduce)cards.push({it,cv,vis:true})}
   else b.disabled=true;return b}
 function drawRes(){const box=$('#res');box.innerHTML='';const groups=[...new Set(items.map(i=>i.grp))];
   groups.forEach(g=>{const list=items.filter(i=>i.grp===g),sec=document.createElement('section');sec.className='rsec';
@@ -42,7 +42,23 @@ function drawRes(){const box=$('#res');box.innerHTML='';const groups=[...new Set
     else list.forEach(it=>grid.append(cardEl(it)));box.append(sec)})}
 const io='IntersectionObserver'in window?new IntersectionObserver(es=>es.forEach(e=>{const c=cards.find(x=>x.cv===e.target);if(c)c.vis=e.isIntersecting})):null;
 let lastT=0;
-function tick(ts){if(ts-lastT>=1000/12){lastT=ts;if(!$('#dlg').open)cards.forEach(c=>c.vis&&c.it.paint(c.cv,ts,c.it.ps))}requestAnimationFrame(tick)}
+function tick(ts){if(ts-lastT>=1000/12){lastT=ts;if(!$('#dlg').open&&!$('#lbx').open)cards.forEach(c=>c.vis&&c.it.paint(c.cv,ts,c.it.ps))}requestAnimationFrame(tick)}
+
+/* penampil besar: klik kartu, geser atau panah untuk pindah */
+let vi=0,vloop=0,vdir=0;const vlist=()=>items.filter(i=>i.ok);
+function showV(k,dir){const L=vlist();vi=(k+L.length)%L.length;const it=L[vi],cv=$('#lcv'),s=Math.min(1,1000/Math.max(it.w,it.h));
+  cancelAnimationFrame(vloop);$('#lT').textContent=it.label;$('#lS').textContent=it.sub;$('#lN').textContent=`${vi+1} / ${L.length}`;
+  $('#lPrev').hidden=$('#lNext').hidden=L.length<2;
+  if(dir&&!reduce){cv.classList.remove('inL','inR');void cv.offsetWidth;cv.classList.add(dir>0?'inR':'inL')}
+  const t0=performance.now(),run=()=>{it.paint(cv,performance.now()-t0,s);if(it.anim)vloop=requestAnimationFrame(run)};run()}
+function openView(it){showV(vlist().indexOf(it),0);$('#lbx').showModal()}
+$('#lPrev').onclick=()=>showV(vi-1,-1);$('#lNext').onclick=()=>showV(vi+1,1);$('#lX').onclick=()=>$('#lbx').close();
+$('#lbx').addEventListener('close',()=>cancelAnimationFrame(vloop));
+$('#lbx').addEventListener('click',e=>{if(e.target===$('#lbx'))$('#lbx').close()});
+$('#lbx').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();showV(vi-1,-1)}else if(e.key==='ArrowRight'){e.preventDefault();showV(vi+1,1)}});
+{let sx=null;const st=$('#lStage');st.addEventListener('pointerdown',e=>{if(!e.target.closest('.lnav'))sx=e.clientX});
+  st.addEventListener('pointerup',e=>{if(sx==null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50)showV(vi+(d<0?1:-1),d<0?1:-1)});
+  st.addEventListener('pointercancel',()=>sx=null)}
 
 /* dialog pilih unduhan */
 function dlgPrev(){cancelAnimationFrame(dlgLoop);if(!cur)return;const it=cur,cv=$('#dcv'),s=Math.min(1,520/it.w);

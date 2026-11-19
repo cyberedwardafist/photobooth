@@ -22,6 +22,15 @@
     <button class="linkbtn" id="fresh">Mulai dari awal dengan foto baru</button>
   </div>
 </section>
+<dialog id="lbx" class="lbx" aria-label="Lihat hasil">
+  <div class="lhead"><p><b id="lT"></b><span id="lS"></span></p><span class="lcount" id="lN" aria-live="polite"></span><button class="btn alt" id="lX">Tutup</button></div>
+  <div class="lstage" id="lStage">
+    <button class="lnav" id="lPrev" aria-label="Sebelumnya"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4l-6 6 6 6"/></svg></button>
+    <canvas id="lcv" aria-label="Hasil dalam ukuran besar"></canvas>
+    <button class="lnav" id="lNext" aria-label="Berikutnya"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4l6 6-6 6"/></svg></button>
+  </div>
+  <p class="lhint">Geser ke kiri atau kanan, atau pakai tombol panah, untuk melihat hasil lainnya.</p>
+</dialog>
 <dialog id="dlg" aria-labelledby="dT">
   <form method="dialog" class="dhead"><h3 id="dT">Pilih yang mau diunduh</h3><button class="btn alt" aria-label="Tutup">Tutup</button></form>
   <div class="dbody">
