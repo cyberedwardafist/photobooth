@@ -103,7 +103,7 @@ function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(
   if(!ids.includes(bgId))bgId='me';mx.fillStyle='#1E2D5A';mx.fillRect(0,0,640,480);
   const bg=vidFor(bgId);if(bg)cover(bg,0,0,640,480,bgId==='me');
   const rest=ids.filter(k=>k!==bgId);
-  if(seg){rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const c=cutout(k,v,k==='me');mx.drawImage(c.cv,(i%2?-1:1)*(Math.floor(i/2)+1)*170,0)})}
+  if(seg){rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const c=cutout(k,v,k==='me');mx.drawImage(c.cv,0,0)})}
   else{const w=Math.min(200,(640-20)/Math.max(1,rest.length)-10),h=w*.75,tot=rest.length*(w+10)-10;
     rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const x=(640-tot)/2+i*(w+10),y=480-h-16;mx.save();rrect(mx,x,y,w,h,14);mx.clip();cover(v,x,y,w,h,k==='me');mx.restore();
       mx.strokeStyle='#fff';mx.lineWidth=4;rrect(mx,x,y,w,h,14);mx.stroke()})}
