@@ -430,3 +430,12 @@ section.cta-band{padding:0 5vw 72px}
 .bgopt.on{border-color:var(--blue);background:var(--mist);box-shadow:0 4px 0 rgba(47,91,181,.25)}.bgopt.on i{display:grid}
 .bgopt:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.bgopt{transition:none}.bgopt:hover{transform:none}}
+/* Connect: ruang bersama (iframe) */
+.inframe nav,.inframe footer{display:none}
+.runbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 5vw;background:#fff;border-bottom:2px solid var(--mist);font-weight:700}
+.runbar .btn{min-height:40px}
+.vc{display:flex;gap:12px;overflow-x:auto;padding:14px 5vw;background:var(--sky)}
+.vc .tile{flex:0 0 clamp(150px,22vw,240px)}
+#app{display:block;width:100%;min-height:60vh;border:0}
+.guest #ctrls[inert],.guest #layouts[inert],.guest #bgrow[inert],.guest #nextsec[inert]{opacity:.55}
+.guest #next,.guest .actbar .row a,.guest a[href="foto.html"].btn{opacity:.5;cursor:not-allowed}

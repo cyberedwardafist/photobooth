@@ -39,12 +39,21 @@ function askLeave(dest){let d=document.getElementById('leave');
   if(!d){d=document.createElement('dialog');d.id='leave';d.className='leave';d.setAttribute('aria-labelledby','leaveT');
     d.innerHTML='<h3 id="leaveT">Yakin mau keluar?</h3><p>Foto yang sudah kamu ambil akan hilang. Kalau keluar, kamu harus mengulang dari awal.</p><div class="row"><button class="btn" id="leaveStay" autofocus>Tetap di sini</button><button class="btn alt" id="leaveGo">Ya, keluar</button></div>';
     document.body.append(d);d.querySelector('#leaveStay').onclick=()=>d.close()}
-  d.querySelector('#leaveGo').onclick=async()=>{try{sessionStorage.removeItem(KEY)}catch{}leaveSkip=true;try{await clipClear()}catch{}location.href=dest};
+  d.querySelector('#leaveGo').onclick=async()=>{try{sessionStorage.removeItem(KEY)}catch{}leaveSkip=true;try{await clipClear()}catch{}(window.top||window).location.href=dest};
   if(!d.open)d.showModal()}
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
   const a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.target&&a.target!=='_self')||a.hasAttribute('download')||a.getAttribute('aria-disabled')==='true')return;
   const u=new URL(a.href,location.href);if(u.origin!==location.origin||(u.pathname===location.pathname&&u.hash))return;
   if(FLOWP.includes(pageOf(u))){leaveSkip=true;return}
-  if(hasPhotos()){e.preventDefault();askLeave(a.href)}});
-window.addEventListener('beforeunload',e=>{if(leaveSkip||!hasPhotos())return;e.preventDefault();e.returnValue=''});
+  if(hasPhotos()){e.preventDefault();askLeave(a.href)}else if(window!==top)a.target='_top'});
+window.addEventListener('beforeunload',e=>{if(window!==top||leaveSkip||!hasPhotos())return;e.preventDefault();e.returnValue=''});
 window.addEventListener('pageshow',()=>{leaveSkip=false});
+
+/* Connect: halaman ini bisa tampil di dalam ruang (connect.html). PBR = objek ruang milik halaman induk */
+const PBR=(()=>{try{return window.parent!==window&&window.parent.PBC||null}catch{return null}})();
+if(window.parent!==window)document.documentElement.classList.add('inframe');
+if(PBR&&PBR.role==='guest')document.documentElement.classList.add('guest');
+const pbSync=patch=>{if(PBR)PBR.send({k:'state',patch})},pbEv=(name,data)=>{if(PBR)PBR.send({k:'ev',name,data})};
+/* tamu tidak bisa pindah langkah; hanya host */
+document.addEventListener('click',e=>{if(!(PBR&&PBR.role==='guest'))return;const a=e.target.closest&&e.target.closest('a[href]');
+  if(a){const u=new URL(a.href,location.href);if(u.origin===location.origin&&FLOWP.includes(pageOf(u))){e.preventDefault();e.stopImmediatePropagation()}}},true);

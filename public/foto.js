@@ -1,7 +1,7 @@
 const st0=getState();
 let lay=LAY[st0.lay]?st0.lay:'1x4',photos=[],adj=[],cur=0,sel=-1,stream=null,delay=3,busy=false;
 const count=()=>LAY[lay][0]*LAY[lay][1];
-const persist=()=>setState({lay,adj,photos:photos.map(p=>p?p.toDataURL('image/jpeg',.85):null)});
+const persist=()=>{const p={lay,adj,photos:photos.map(p=>p?p.toDataURL('image/jpeg',.85):null)};setState(p);if(PBR&&!G)pbSync(p)};
 /* HP: kotak kamera "melayang" di atas slot yang sedang diisi, jadi pratinjau langsung ada di tata letak */
 const mq=matchMedia('(max-width:600px)');
 function placeStage(){const st=document.querySelector('.stage'),wrap=$('#slotwrap');
@@ -46,17 +46,18 @@ async function recordLive(i,g){const frames=[...ring],key=Math.max(0,frames.leng
     const blobs=await Promise.all(frames.map(c=>new Promise(r=>c.toBlob(r,'image/jpeg',.8))));
     if(gen[i]!==g)return;await clipPut(i,{blobs,key})}
   catch{}finally{liveBusy--;syncNext()}}
-async function startCam(){$('#msg').hidden=false;$('#msgText').textContent='Menyalakan kamera...';$('#retry').hidden=true;
+async function startCam(){if(PBR&&PBR.stream){stream=PBR.stream;$('#cam').srcObject=stream;$('#msg').hidden=true;drawSlots();initRoom();return}
+  $('#msg').hidden=false;$('#msgText').textContent='Menyalakan kamera...';$('#retry').hidden=true;
   try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280}},audio:false});$('#cam').srcObject=stream;$('#msg').hidden=true}
   catch(e){stream=null;$('#msgText').textContent='Kamera tidak bisa dipakai. Izinkan akses kamera di peramban, atau unggah foto dari galeri.';$('#retry').hidden=false}
   drawSlots();if(stream&&!room)initRoom()}
 $('#retry').onclick=startCam;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 $('#shoot').onclick=async()=>{if(!stream||busy)return;busy=true;$('#shoot').disabled=true;
-  for(let i=delay;i>0;i--){$('#count').textContent=i;await wait(1000)}$('#count').textContent='';
+  pbEv('shoot',delay);await cd(delay);
   busy=false;const i=put(grab(640,480));recordLive(i,gen[i])};
-$('#t0').onclick=()=>{delay=0;$('#t0').setAttribute('aria-pressed','true');$('#t3').setAttribute('aria-pressed','false')};
-$('#t3').onclick=()=>{delay=3;$('#t3').setAttribute('aria-pressed','true');$('#t0').setAttribute('aria-pressed','false')};
+$('#t0').onclick=()=>{delay=0;pbEv('delay',0);$('#t0').setAttribute('aria-pressed','true');$('#t3').setAttribute('aria-pressed','false')};
+$('#t3').onclick=()=>{delay=3;pbEv('delay',3);$('#t3').setAttribute('aria-pressed','true');$('#t0').setAttribute('aria-pressed','false')};
 $('#file').onchange=async e=>{for(const f of e.target.files){try{const b=await createImageBitmap(f);put(toCanvas(b,b.width,b.height,false))}catch{alert('Berkas bukan gambar yang bisa dibaca: '+f.name)}}e.target.value=''};
 const doReset=()=>{sel=-1;photos=photos.map(()=>null);adj=photos.map(()=>null);photos.forEach((_,i)=>gen[i]=(gen[i]||0)+1);clipClear().catch(()=>{});cur=0;persist();drawSlots()};
 $('#reset').onclick=doReset;$('#reset2').onclick=doReset;
@@ -66,7 +67,7 @@ moveStage();
 (async()=>{photos=Array.from({length:count()},()=>null);adj=Array.from({length:count()},(_,i)=>(st0.adj||[])[i]||null);
   const saved=st0.photos||[];for(let i=0;i<photos.length;i++)if(saved[i]){try{photos[i]=await dataToCanvas(saved[i])}catch{adj[i]=null}}
   for(let i=0;i<photos.length;i++)if(!photos[i])clipDel(i).catch(()=>{});
-  cur=Math.max(0,photos.indexOf(null));drawLayouts();drawSlots();startCam()})();
+  cur=Math.max(0,photos.indexOf(null));drawLayouts();drawSlots();setTimeout(startCam,0)})();
 
 function rrect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 /* Connect: gabungkan kamera semua orang di ruang dalam satu frame (latar dari kamera yang dipilih, kamera lain jadi kotak di depannya) */
@@ -113,10 +114,19 @@ function fillSel(){if(!room)return;const ids=['me',...[...room.members].filter((
     ids.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='bgopt';b.dataset.id=k;b.setAttribute('role','radio');
       const v=document.createElement('video');v.autoplay=true;v.muted=true;v.playsInline=true;if(k==='me')v.className='me';v.srcObject=k==='me'?stream:room.members.get(k).stream;v.play().catch(()=>{});
       const s=document.createElement('span');s.textContent=nm(k);const c=document.createElement('i');c.setAttribute('aria-hidden','true');c.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg>';
-      b.append(v,c,s);b.onclick=()=>{bgId=k;paintPick()};row.append(b)})}
+      b.append(v,c,s);b.onclick=()=>{bgId=k;paintPick();pbEv('bg',gid(k))};row.append(b)})}
   paintPick();$('#bgpick').hidden=!n;setMix(n>0)}
 function paintPick(){document.querySelectorAll('.bgopt').forEach(b=>{const on=b.dataset.id===bgId;b.setAttribute('aria-checked',on);b.classList.toggle('on',on)})}
 function setMix(on){if(on===mixOn)return;mixOn=on;$('#mix').hidden=!on;if(on){loadSeg();mixLoop()}}
-async function initRoom(){const info=roomGet();if(!info)return;$('#cbar').hidden=false;$('#ccode').textContent=info.code;
-  room=await openRoom({...info,fresh:false},stream,{onChange:R=>{room=R;fillSel()},onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
-$('#cleave').onclick=()=>{if(room)room.leave();roomClear();location.reload()};
+const G=!!PBR&&PBR.role==='guest',gid=k=>k==='me'?room.self:k;
+async function cd(n){for(let i=n;i>0;i--){$('#count').textContent=i;await wait(1000)}$('#count').textContent=''}
+function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#ccode').textContent=room.code;
+  if(G){$('#gnote').hidden=false;['#layouts','#slotwrap','#ctrls','#reset2','#bgrow','#nextsec'].forEach(s=>{const x=$(s);if(x)x.inert=true})}
+  PBR.hook={members:fillSel,sync:p=>{if(G)applyRemote(p)},ev:(n,d)=>{
+    if(n==='hello'&&!G){pbEv('bg',gid(bgId));pbEv('delay',delay);persist()}
+    else if(G){if(n==='shoot')cd(d);else if(n==='delay'){delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)}
+      else if(n==='bg'){bgId=d===room.self?'me':d;paintPick()}}}};
+  fillSel();if(G)pbEv('hello')}
+async function applyRemote(p){if(p.lay===undefined&&p.photos===undefined)return;if(LAY[p.lay])lay=p.lay;const n=count(),src=p.photos||[];
+  photos=await Promise.all(Array.from({length:n},(_,i)=>src[i]?dataToCanvas(src[i]).catch(()=>null):null));
+  adj=Array.from({length:n},(_,i)=>(p.adj||[])[i]||null);cur=Math.max(0,photos.indexOf(null));sel=-1;drawLayouts();drawSlots()}

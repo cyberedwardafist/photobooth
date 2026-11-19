@@ -19,10 +19,10 @@ async function openRoom(o,stream,cb={}){
       if(d.t==='hi'&&R.role==='host'){const old=[...R.members].filter(([k])=>k!==c.peer).map(([id,m])=>({id,name:m.name}));
         old.unshift({id:peer.id,name:o.name});send(c,{t:'roster',list:old});
         conns.forEach((x,k)=>{if(k!==c.peer)send(x,{t:'join',id:c.peer,name:d.name})});
-        R.members.set(c.peer,{...(R.members.get(c.peer)||{}),name:d.name});ch()}
+        R.members.set(c.peer,{...(R.members.get(c.peer)||{}),name:d.name});ch();if(R.started&&cb.onLate)cb.onLate(c,send)}
       else if(d.t==='roster'){d.list.forEach(m=>{R.members.set(m.id,{...(R.members.get(m.id)||{}),name:m.name});callTo(peer,m.id)});ch()}
       else if(d.t==='join'){R.members.set(d.id,{...(R.members.get(d.id)||{}),name:d.name});ch()}
-      else if(d.t==='start'&&cb.onStart)cb.onStart()});
+      else if(d.t==='start'&&cb.onStart)cb.onStart();else if(d.t==='app'){if(R.role==='host')conns.forEach((x,k)=>{if(k!==c.peer)send(x,d)});cb.onApp&&cb.onApp(d)}});
     c.on('close',()=>drop(c.peer))};
   const mkPeer=id=>new Promise((ok,no)=>{const p=id?new P(id):new P();p.on('open',()=>ok(p));p.on('error',e=>no(e))});
   let peer;
@@ -42,6 +42,7 @@ async function openRoom(o,stream,cb={}){
   R.self=peer.id;R.peer=peer;
   peer.on('call',c=>{c.answer(stream);const nm=(c.metadata&&c.metadata.name)||'Teman';
     c.on('stream',s=>{const m=R.members.get(c.peer)||{name:nm};m.stream=s;if(!m.name)m.name=nm;R.members.set(c.peer,m);ch()});c.on('close',()=>drop(c.peer))});
+  R.bcast=m=>conns.forEach(c=>send(c,{t:'app',...m}));
   R.start=()=>conns.forEach(c=>send(c,{t:'start'}));
   R.leave=()=>{R.closed=true;try{peer.destroy()}catch{}};
   ch();return R}
