@@ -31,7 +31,7 @@ const clipDel=i=>idbDo('readwrite',s=>s.delete(i));
 const clipClear=()=>idbDo('readwrite',s=>s.clear());
 
 /* Penjaga keluar: kalau sudah ada foto, keluar dari alur harus dikonfirmasi karena semuanya mulai dari awal */
-const FLOWP=['foto','adjust','edit','unduh','template'];
+const FLOWP=['foto','adjust','edit','unduh'];
 const hasPhotos=()=>(getState().photos||[]).some(Boolean);
 let leaveSkip=false;const pbSkip=()=>{leaveSkip=true};
 const pageOf=u=>u.pathname.split('/').pop().replace(/\.html$/,'')||'index';

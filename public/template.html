@@ -10,9 +10,10 @@
 <body>
 <nav class="in"><a class="logo" href="index.html">photobooth</a><div><a href="index.html">Home</a><a href="template.html" aria-current="page">Template</a></div></nav>
 <section class="editwrap pgsec">
-  <div class="head"><h2>Library template</h2><p>Lihat semua desain frame dan pilih satu. Frame itu otomatis terpilih di langkah pilih frame, dan masih bisa kamu ganti di sana.</p></div>
+  <div class="head"><h2>Library template</h2><p>Lihat semua desain frame. Klik salah satu untuk langsung mulai memotret dengan frame itu. Di langkah pilih frame nanti, frame-nya sudah terpilih dan masih bisa kamu ganti.</p>
+    <a class="btn alt" href="foto.html" id="plain">Mulai memotret tanpa memilih frame</a></div>
   <div id="ui">
-    <p class="note" id="sampleNote" hidden>Pratinjau memakai foto contoh. Setelah kamu mengambil foto, frame akan tampil dengan fotomu.</p>
+    <p class="note" id="sampleNote">Pratinjau memakai foto contoh. Fotomu sendiri akan tampil di langkah pilih frame.</p>
     <div class="ffilter">
       <div class="row" id="cats" role="group" aria-label="Kategori frame"></div>
       <div class="fsearch"><label for="q">Cari frame</label><input type="search" id="q" placeholder="Cari nama frame" autocomplete="off"><span class="muted" id="fcount" aria-live="polite"></span></div>
@@ -20,11 +21,7 @@
     <p class="state" id="fempty" hidden>Tidak ada frame yang cocok. Coba kategori lain atau hapus kata pencarian.</p>
     <div class="fgrid" id="fgrid" role="group" aria-label="Pilihan frame"></div>
     <p class="note" id="tplNote" hidden>Template tambahan dari admin gagal dimuat. <button class="linkbtn" id="again">Coba lagi</button></p>
-    <div class="actbar">
-      <p><span class="muted">Frame terpilih:</span><b id="picked">Belum ada</b></p>
-      <div class="row"><a class="btn" id="go" href="foto.html" aria-disabled="true">Pakai frame ini</a></div>
-    </div>
-  </div>
+      </div>
 </section>
 <footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
 <script src="common.js"></script>

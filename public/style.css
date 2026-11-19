@@ -296,3 +296,8 @@ dialog{margin:auto}
 
 #go[aria-disabled=true]{pointer-events:none}
 #sampleNote{max-width:1150px;margin:0 auto 10px}
+
+.fcta{justify-self:center;padding:6px 14px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:14px}
+.fcard:hover .fcta{background:#264A95}
+#plain{margin-top:14px}
+@media(max-width:600px){.fcta{font-size:13px;padding:5px 10px}#plain{font-size:15px;padding:0 14px;margin-top:10px;text-align:center}}

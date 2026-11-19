@@ -7,7 +7,7 @@ function Gallery(o){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const c=cards.get(e.target.dataset.id);if(c&&!c.done)render(c)}),{rootMargin:'700px 0px'});
   function render(c){const {W}=stripSize(o.lay,c.f);renderStrip(c.el.querySelector('canvas'),{lay:o.lay,photos:o.imgs,adj:o.adj,frame:c.f,s:Math.min(1,440/W)});c.done=true}
   function card(f){const {W,H}=stripSize(o.lay,f),s=Math.min(1,440/W),el=document.createElement('button');el.className='fcard';el.dataset.id=f.id;
-    el.innerHTML=`<span class="fprev"><canvas aria-hidden="true"></canvas></span><span class="fname">${esc(f.name)}</span>`;
+    el.innerHTML=`<span class="fprev"><canvas aria-hidden="true"></canvas></span><span class="fname">${esc(f.name)}</span>${o.cta?`<span class="fcta">${esc(o.cta)}</span>`:''}`;
     const cv=el.querySelector('canvas');cv.width=Math.round(W*s/2)*2;cv.height=Math.round(H*s/2)*2;
     el.onclick=()=>pick(f);cards.set(f.id,{f,el,done:false});io.observe(el);return el}
   function mark(){cards.forEach(({el,f})=>el.setAttribute('aria-pressed',!!cur&&f.id===cur.id))}
