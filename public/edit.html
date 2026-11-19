@@ -14,6 +14,11 @@
   <div class="head"><h2>Pilih frame</h2><p>Setiap frame sudah memakai fotomu, jadi kamu bisa langsung lihat mana yang cocok. Klik satu untuk memilih.</p></div>
   <div class="msg" id="msg"><p id="msgT">Memuat foto...</p><a class="btn" id="msgA" href="foto.html" hidden>Ambil foto dulu</a></div>
   <div id="ui" hidden>
+    <div class="ffilter">
+      <div class="row" id="cats" role="group" aria-label="Kategori frame"></div>
+      <div class="fsearch"><label for="q">Cari frame</label><input type="search" id="q" placeholder="Cari nama frame" autocomplete="off"><span class="muted" id="fcount" aria-live="polite"></span></div>
+    </div>
+    <p class="state" id="fempty" hidden>Tidak ada frame yang cocok. Coba kategori lain atau hapus kata pencarian.</p>
     <div class="fgrid" id="fgrid" role="group" aria-label="Pilihan frame"></div>
     <p class="note" id="tplNote" hidden>Template tambahan dari admin gagal dimuat. <button class="linkbtn" id="again">Coba lagi</button></p>
     <div class="actbar">

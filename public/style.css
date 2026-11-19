@@ -201,3 +201,15 @@ dialog{margin:auto}
 @keyframes inL{from{opacity:.2;transform:translateX(-48px)}to{opacity:1;transform:none}}
 #lcv.inR{animation:inR .22s ease-out}#lcv.inL{animation:inL .22s ease-out}
 @media(max-width:560px){.lnav{position:absolute;bottom:48px;width:46px;height:46px;z-index:2}#lPrev{left:16px}#lNext{right:16px}#lcv{max-width:100%}.lstage{position:relative}}
+
+/* filter frame */
+.ffilter{position:sticky;top:0;z-index:6;max-width:1150px;margin:0 auto 16px;padding:12px 0;background:var(--mist);display:grid;gap:10px}
+.ffilter .row{flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}
+.ffilter .chip{flex:none}
+.cnt{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 6px;border-radius:999px;background:var(--mist);font-size:13px}
+.chip[aria-pressed=true] .cnt{background:#fff}
+.fsearch{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fsearch label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.fsearch input{flex:1;min-width:180px;max-width:360px;min-height:44px;padding:0 14px;border:2px solid #fff;border-radius:10px;background:#fff}
+.fsearch input:focus-visible{border-color:var(--blue)}
+#fempty{max-width:1150px;margin:0 auto 16px}

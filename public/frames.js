@@ -1,21 +1,21 @@
-/* Pustaka frame. g=jarak/tepi, r=sudut foto, bw/bc=bingkai foto, sh=bayangan, pat=pola latar, pc=warna pola, ob=garis tepi strip */
+/* Pustaka frame. cat=kategori (muncul sebagai filter di halaman frame; tambah kategori baru cukup dengan menulis nama baru). g=jarak/tepi, r=sudut foto, bw/bc=bingkai foto, sh=bayangan, pat=pola latar, pc=warna pola, ob=garis tepi strip */
 const FRAMES=[
- {id:'krem',name:'Krem Stasiun',bg:'#F5E6D5',ink:'#1E2D5A'},
- {id:'langit',name:'Langit Pagi',bg:'#DBE2F8',ink:'#1E2D5A',pat:'dots',pc:'rgba(255,255,255,.85)',g:36,r:10},
- {id:'sakura',name:'Sakura',bg:'#E6A5C3',ink:'#3B1630',pat:'hearts',pc:'rgba(255,255,255,.55)',g:36,r:14,bw:4,bc:'#FFFFFF'},
- {id:'laut',name:'Laut Biru',bg:'#83C2F8',ink:'#10285A',pat:'stripes',pc:'rgba(255,255,255,.35)',g:34,r:4},
- {id:'teal',name:'Gerbong Teal',bg:'#57A9B4',ink:'#0B2F35',pat:'checker',pc:'rgba(255,255,255,.2)',g:34,r:4},
- {id:'film',name:'Roll Film',bg:'#17181C',ink:'#F5E6D5',pat:'film',pc:'#F5E6D5',g:46,r:3},
- {id:'polaroid',name:'Polaroid',bg:'#FFFFFF',ink:'#1E2D5A',g:42,r:2,sh:1,ob:{w:3,c:'#DFE3EE'}},
- {id:'bintang',name:'Langit Malam',bg:['#1E2D5A','#5B3A8C'],ink:'#FFFFFF',pat:'stars',pc:'rgba(255,255,255,.8)',g:34,r:10},
- {id:'senja',name:'Senja',bg:['#FFD9B5','#F4A3C0'],ink:'#5A1F3D',g:34,r:22,bw:4,bc:'#FFFFFF',sh:1},
- {id:'matcha',name:'Matcha',bg:'#CFE3B4',ink:'#2D4A1E',pat:'dots',pc:'#A9CF7C',g:36,r:26},
- {id:'retro',name:'Kotak Retro',bg:'#FBEBD3',ink:'#6B2D12',pat:'checker',pc:'rgba(240,160,100,.35)',g:36,bw:5,bc:'#6B2D12'},
- {id:'mono',name:'Monokrom',bg:'#FFFFFF',ink:'#000000',g:30,bw:6,bc:'#000000'}
+ {id:'krem',cat:'Klasik',name:'Krem Stasiun',bg:'#F5E6D5',ink:'#1E2D5A'},
+ {id:'langit',cat:'Pastel',name:'Langit Pagi',bg:'#DBE2F8',ink:'#1E2D5A',pat:'dots',pc:'rgba(255,255,255,.85)',g:36,r:10},
+ {id:'sakura',cat:'Lucu',name:'Sakura',bg:'#E6A5C3',ink:'#3B1630',pat:'hearts',pc:'rgba(255,255,255,.55)',g:36,r:14,bw:4,bc:'#FFFFFF'},
+ {id:'laut',cat:'Pola',name:'Laut Biru',bg:'#83C2F8',ink:'#10285A',pat:'stripes',pc:'rgba(255,255,255,.35)',g:34,r:4},
+ {id:'teal',cat:'Pola',name:'Gerbong Teal',bg:'#57A9B4',ink:'#0B2F35',pat:'checker',pc:'rgba(255,255,255,.2)',g:34,r:4},
+ {id:'film',cat:'Gelap',name:'Roll Film',bg:'#17181C',ink:'#F5E6D5',pat:'film',pc:'#F5E6D5',g:46,r:3},
+ {id:'polaroid',cat:'Klasik',name:'Polaroid',bg:'#FFFFFF',ink:'#1E2D5A',g:42,r:2,sh:1,ob:{w:3,c:'#DFE3EE'}},
+ {id:'bintang',cat:'Gelap',name:'Langit Malam',bg:['#1E2D5A','#5B3A8C'],ink:'#FFFFFF',pat:'stars',pc:'rgba(255,255,255,.8)',g:34,r:10},
+ {id:'senja',cat:'Pastel',name:'Senja',bg:['#FFD9B5','#F4A3C0'],ink:'#5A1F3D',g:34,r:22,bw:4,bc:'#FFFFFF',sh:1},
+ {id:'matcha',cat:'Pastel',name:'Matcha',bg:'#CFE3B4',ink:'#2D4A1E',pat:'dots',pc:'#A9CF7C',g:36,r:26},
+ {id:'retro',cat:'Klasik',name:'Kotak Retro',bg:'#FBEBD3',ink:'#6B2D12',pat:'checker',pc:'rgba(240,160,100,.35)',g:36,bw:5,bc:'#6B2D12'},
+ {id:'mono',cat:'Klasik',name:'Monokrom',bg:'#FFFFFF',ink:'#000000',g:30,bw:6,bc:'#000000'}
 ];
 const FR0={g:28,r:0,pat:'none',bw:0,sh:0,ink:'#1E2D5A',bg:'#F5E6D5'};
 const frameFull=f=>({...FR0,...f});
-const plainFrame=t=>({id:'tpl-'+t.id,name:t.name,bg:t.bg,ink:t.ink});
+const plainFrame=t=>({id:'tpl-'+t.id,cat:'Warna polos',name:t.name,bg:t.bg,ink:t.ink});
 const frameOf=st=>frameFull(st.frame||(st.bg?{id:'old',name:'Warna',bg:st.bg,ink:st.ink||inkFor(st.bg)}:FRAMES[0]));
 const stripSize=(lay,f)=>{const [c,r]=LAY[lay],g=frameFull(f).g;return{W:c*360+(c+1)*g,H:r*270+(r+1)*g+110}};
 function rr(x,a,b,w,h,r){r=Math.min(r,w/2,h/2);x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
