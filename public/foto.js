@@ -104,11 +104,19 @@ function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(
     rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const x=(640-tot)/2+i*(w+10),y=480-h-16;mx.save();rrect(mx,x,y,w,h,14);mx.clip();cover(v,x,y,w,h,k==='me');mx.restore();
       mx.strokeStyle='#fff';mx.lineWidth=4;rrect(mx,x,y,w,h,14);mx.stroke()})}
   requestAnimationFrame(mixLoop)}
-function fillSel(){if(!room)return;const s=$('#bgsel'),ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
-  s.innerHTML=ids.map(k=>`<option value="${k}">${k==='me'?'Kameraku':esc((room.members.get(k)||{}).name||'Teman')}</option>`).join('');s.value=ids.includes(bgId)?bgId:'me';
-  const n=ids.length-1;$('#cinfo').textContent=(n?`${n} teman terhubung`:'Menunggu teman terhubung...')+(mixOn&&segState===1?' • memuat pemisah latar...':mixOn&&segState===3?' • pemisah latar gagal dimuat, kamera tampil sebagai kotak':'');$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false);if(n&&!autoMix){autoMix=true;setMix(true)}}
-function setMix(on){mixOn=on;$('#mixbtn').textContent=on?'Kamera digabung (klik untuk matikan)':'Gabung kamera';$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on){loadSeg();mixLoop()}}
+let pickKey='';
+function fillSel(){if(!room)return;const ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)],n=ids.length-1;
+  $('#cinfo').textContent=(n?`${n} teman terhubung, kamera otomatis digabung`:'Menunggu teman terhubung...')+(n&&segState===1?' • memuat pemisah latar...':n&&segState===3?' • pemisah latar gagal dimuat, kamera lain tampil sebagai kotak':'');
+  if(!ids.includes(bgId))bgId='me';
+  const nm=k=>k==='me'?'Kameraku':(room.members.get(k)||{}).name||'Teman',key=ids.map(k=>k+':'+nm(k)).join('|');
+  if(key!==pickKey){pickKey=key;const row=$('#bgrow');row.innerHTML='';
+    ids.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='bgopt';b.dataset.id=k;b.setAttribute('role','radio');
+      const v=document.createElement('video');v.autoplay=true;v.muted=true;v.playsInline=true;if(k==='me')v.className='me';v.srcObject=k==='me'?stream:room.members.get(k).stream;v.play().catch(()=>{});
+      const s=document.createElement('span');s.textContent=nm(k);const c=document.createElement('i');c.setAttribute('aria-hidden','true');c.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg>';
+      b.append(v,c,s);b.onclick=()=>{bgId=k;paintPick()};row.append(b)})}
+  paintPick();$('#bgpick').hidden=!n;setMix(n>0)}
+function paintPick(){document.querySelectorAll('.bgopt').forEach(b=>{const on=b.dataset.id===bgId;b.setAttribute('aria-checked',on);b.classList.toggle('on',on)})}
+function setMix(on){if(on===mixOn)return;mixOn=on;$('#mix').hidden=!on;if(on){loadSeg();mixLoop()}}
 async function initRoom(){const info=roomGet();if(!info)return;$('#cbar').hidden=false;$('#ccode').textContent=info.code;
   room=await openRoom({...info,fresh:false},stream,{onChange:R=>{room=R;fillSel()},onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
-$('#mixbtn').onclick=()=>setMix(!mixOn);$('#bgsel').onchange=e=>{bgId=e.target.value};
 $('#cleave').onclick=()=>{if(room)room.leave();roomClear();location.reload()};
