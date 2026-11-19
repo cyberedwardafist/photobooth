@@ -83,11 +83,11 @@ function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(
   rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const x=(640-tot)/2+i*(w+10),y=480-h-16;mx.save();rrect(mx,x,y,w,h,14);mx.clip();cover(v,x,y,w,h,k==='me');mx.restore();
     mx.strokeStyle='#fff';mx.lineWidth=4;rrect(mx,x,y,w,h,14);mx.stroke()});
   requestAnimationFrame(mixLoop)}
-function fillSel(){const s=$('#bgsel'),ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
+function fillSel(){if(!room)return;const s=$('#bgsel'),ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
   s.innerHTML=ids.map(k=>`<option value="${k}">${k==='me'?'Kameraku':esc((room.members.get(k)||{}).name||'Teman')}</option>`).join('');s.value=ids.includes(bgId)?bgId:'me';
   const n=ids.length-1;$('#cinfo').textContent=n?`${n} teman terhubung`:'Menunggu teman terhubung...';$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false)}
 function setMix(on){mixOn=on;$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on)mixLoop()}
 async function initRoom(){const info=roomGet();if(!info)return;$('#cbar').hidden=false;$('#ccode').textContent=info.code;
-  room=await openRoom({...info,fresh:false},stream,{onChange:fillSel,onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
+  room=await openRoom({...info,fresh:false},stream,{onChange:R=>{room=R;fillSel()},onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
 $('#mixbtn').onclick=()=>setMix(!mixOn);$('#bgsel').onchange=e=>{bgId=e.target.value};
 $('#cleave').onclick=()=>{if(room)room.leave();roomClear();location.reload()};
