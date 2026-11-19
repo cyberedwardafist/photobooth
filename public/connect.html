@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect | photobooth</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="in"><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html">Home</a><a href="template.html">Template</a><a href="connect.html" aria-current="page">Connect</a></div></nav>
+<section class="cwrap">
+  <div id="vJoin">
+    <div class="head"><h2>Foto bareng, walau beda tempat</h2><p>Buat ruang atau gabung dengan kode 6 digit. Semua kamera akan menyatu dalam satu frame.</p></div>
+    <div class="cgrid">
+      <div class="panel"><h3>Buat ruang</h3><p class="note">Kamu mendapat kode 6 digit untuk dibagikan ke teman.</p>
+        <label class="fld">Namamu<input id="nameA" maxlength="20" placeholder="Contoh: Dina" autocomplete="nickname"></label>
+        <button class="btn big" id="mk">Buat ruang</button></div>
+      <div class="panel"><h3>Gabung ruang</h3><p class="note">Masukkan kode dari yang membuat ruang.</p>
+        <label class="fld">Namamu<input id="nameB" maxlength="20" placeholder="Contoh: Raka" autocomplete="nickname"></label>
+        <label class="fld">Kode ruang<input id="code" class="codein" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off"></label>
+        <button class="btn alt big" id="jn">Gabung ruang</button></div>
+    </div>
+    <p class="note center" id="err" role="alert"></p>
+  </div>
+  <div id="vRoom" hidden>
+    <div class="head"><h2>Ruang <span class="codebig" id="rc"></span></h2><p id="rsub">Bagikan kode ini. Kamera teman akan muncul di bawah.</p></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="row crow"><button class="btn big-cta" id="go" hidden>Mulai ambil foto</button><button class="btn alt" id="lv">Keluar ruang</button></div>
+    <p class="note center" id="wt" hidden>Menunggu pembuat ruang memulai...</p>
+  </div>
+</section>
+<footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="common.js"></script>
+<script src="connect-core.js"></script>
+<script src="connect.js"></script>
+</body>
+</html>

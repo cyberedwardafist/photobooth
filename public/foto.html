@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="in"><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html">Home</a><a href="template.html">Template</a></div></nav>
+<nav class="in"><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html">Home</a><a href="template.html">Template</a><a href="connect.html">Connect</a></div></nav>
 <section id="booth">
   <ol class="steps" aria-label="Langkah"><li aria-current="step"><b>1</b><span>Foto</span></li><li><b>2</b><span>Atur foto</span></li><li><b>3</b><span>Frame</span></li><li><b>4</b><span>Unduh</span></li></ol>
   <div class="head"><h2>Pilih tata letak, lalu ambil fotonya</h2><p>Setiap slot diisi berurutan. Klik slot untuk mengulang satu foto.</p></div>
@@ -17,11 +17,19 @@
     <div class="stage" aria-live="polite">
       <video id="cam" autoplay playsinline muted></video>
       <div class="overlay" id="msg"><p id="msgText">Menyalakan kamera...</p><button class="btn" id="retry" hidden>Izinkan kamera lagi</button></div>
+      <canvas id="mix" hidden></canvas>
       <div class="count" id="count" aria-hidden="true"></div>
     </div>
     <div class="panel pb">
       <div class="sec"><h3>Tata letak</h3><div class="lays" id="layouts"></div><div class="progrow"><p class="prog">Foto <span id="prog"></span></p><button class="linkbtn mreset" id="reset2">Kosongkan semua</button></div></div>
       <div class="sec scroll" id="slotwrap"><div class="slots" id="slots"></div></div>
+      <div class="sec cbar" id="cbar" hidden>
+        <h3>Connect <span class="codebig" id="ccode"></span></h3>
+        <p class="note" id="cinfo">Menghubungkan...</p>
+        <div class="seg" role="group"><button id="mixbtn" aria-pressed="false">Gabung kamera</button></div>
+        <label class="fld" id="bgwrap" hidden>Latar belakang dari<select id="bgsel"></select></label>
+        <button class="linkbtn" id="cleave">Keluar ruang</button>
+      </div>
       <div class="sec" id="ctrls">
         <div class="seg" role="group" aria-label="Waktu pengambilan foto">
           <button id="t0" aria-pressed="false"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="2.5" fill="currentColor"/></svg>Langsung</button>
@@ -37,7 +45,9 @@
   </div>
 </section>
 <footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="common.js"></script>
+<script src="connect-core.js"></script>
 <script src="foto.js"></script>
 </body>
 </html>

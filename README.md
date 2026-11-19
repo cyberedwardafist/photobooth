@@ -43,3 +43,6 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 
 ## Beranda
 `index.html` + `home.js`: hero dengan ilustrasi bilik, deretan frame berjalan (digambar dari `FRAMES` dengan foto contoh, jadi frame baru otomatis ikut tampil), cara kerja, fitur, dan ajakan penutup. Jumlah frame di ringkasan hero juga otomatis dari `FRAMES.length`. Animasi mati bila pengguna memilih kurangi gerakan.
+
+## Connect
+`connect.html` (+ `connect.js`, `connect-core.js`): buat ruang (kode acak 6 digit) atau gabung ruang dengan kode itu. Koneksi kamera antar perangkat lewat WebRTC (PeerJS, server sinyal publik dari CDN), tanpa perubahan di API/Supabase. Kode ruang = id host `pbconnect-XXXXXX`; id yang sudah dipakai ditolak server, jadi kode dibuat ulang otomatis dan tidak pernah kembar. Pembuat ruang menekan "Mulai ambil foto", semua anggota pindah ke `foto.html` dan tersambung lagi (data ruang di `sessionStorage` `pb_room`). Di `foto.html` ada panel Connect: tombol "Gabung kamera" menyatukan semua kamera dalam satu frame; pilih latar dari kamera siapa lewat menu "Latar belakang dari", kamera lainnya tampil sebagai kotak di depannya. Foto dan live foto diambil dari frame gabungan itu.
