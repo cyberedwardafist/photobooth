@@ -30,7 +30,7 @@ function pattern(x,f,W,H){if(f.pat==='none')return;x.save();x.fillStyle=f.pc;x.s
   else if(f.pat==='hearts'||f.pat==='stars'){const n=Math.round(W*H/4200);for(let k=0;k<n;k++){const px=rnd()*W,py=rnd()*H,sz=8+rnd()*12;f.pat==='hearts'?heart(x,px,py,sz*.8):sparkle(x,px,py,sz)}}
   x.restore()}
 function renderStrip(cv,o){const f=frameFull(o.frame),[c]=LAY[o.lay],w=360,h=270,g=f.g,{W,H}=stripSize(o.lay,f),s=o.s||1;
-  cv.width=Math.round(W*s);cv.height=Math.round(H*s);const x=cv.getContext('2d');x.scale(cv.width/W,cv.height/H);
+  cv.width=Math.round(W*s/2)*2;cv.height=Math.round(H*s/2)*2;const x=cv.getContext('2d');x.scale(cv.width/W,cv.height/H);
   if(Array.isArray(f.bg)){const gr=x.createLinearGradient(0,0,0,H);gr.addColorStop(0,f.bg[0]);gr.addColorStop(1,f.bg[1]);x.fillStyle=gr}else x.fillStyle=f.bg;
   x.fillRect(0,0,W,H);pattern(x,f,W,H);
   if(f.ob){x.strokeStyle=f.ob.c;x.lineWidth=f.ob.w;x.strokeRect(f.ob.w/2,f.ob.w/2,W-f.ob.w,H-f.ob.w)}

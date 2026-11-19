@@ -21,3 +21,11 @@ async function loadStrip(){const st=getState(),lay=LAY[st.lay]?st.lay:'1x4',n=LA
   const imgs=await Promise.all(raw.map(dataToCanvas));await document.fonts.ready;
   return{st,lay,imgs,adj:Array.from({length:n},(_,i)=>adjOf((st.adj||[])[i]))}}
 function stripError(e){$('#msgT').textContent=e&&e.message==='incomplete'?'Strip belum lengkap. Isi semua slot foto dulu, lalu kembali ke sini.':'Foto gagal dibaca dari penyimpanan peramban. Ambil fotonya lagi.';$('#msgA').hidden=false}
+
+const LIVE={W:320,H:240,FPS:12,PRE:15,POST:9};
+const idbOpen=()=>new Promise((ok,no)=>{const r=indexedDB.open('pb',1);r.onupgradeneeded=()=>r.result.createObjectStore('clips');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+const idbDo=(mode,fn)=>idbOpen().then(db=>new Promise((ok,no)=>{const t=db.transaction('clips',mode),q=fn(t.objectStore('clips'));t.oncomplete=()=>{db.close();ok(q&&q.result)};t.onerror=()=>{db.close();no(t.error)}}));
+const clipPut=(i,v)=>idbDo('readwrite',s=>s.put(v,i));
+const clipGet=i=>idbDo('readonly',s=>s.get(i));
+const clipDel=i=>idbDo('readwrite',s=>s.delete(i));
+const clipClear=()=>idbDo('readwrite',s=>s.clear());

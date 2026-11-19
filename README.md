@@ -25,6 +25,9 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 1. `foto.html` ambil atau unggah foto.
 2. `adjust.html` atur tiap foto sendiri-sendiri: filter, kecerahan, kontras, saturasi (tanpa frame). Ada tombol "Terapkan ke semua foto".
 3. `edit.html` pilih frame: template dan warna latar.
-4. `unduh.html` pratinjau akhir dan unduh PNG.
+4. `unduh.html` galeri semua hasil: frame diam (PNG), frame video, foto satuan (PNG), animasi foto (video), live foto (video). Klik satu hasil untuk memilih apa saja yang diunduh; tiap pilihan jadi file terpisah (tanpa zip).
 
 Pengaturan per foto disimpan di `sessionStorage` (`adj`), dan otomatis di-reset kalau fotonya diambil ulang.
+
+## Live foto
+Saat memotret lewat kamera, `foto.js` merekam klip ±2 detik (320x240, 12 fps) per slot dan menyimpannya di IndexedDB (database `pb`). Foto yang diunggah tidak punya klip, jadi tidak ada live foto/frame video untuknya. Video dibuat di peramban dengan MediaRecorder (MP4 bila didukung, kalau tidak WebM), direkam real-time sehingga tab harus tetap terbuka.
