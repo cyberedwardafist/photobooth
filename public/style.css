@@ -293,3 +293,6 @@ dialog{margin:auto}
  #ctrls label.btn{padding:0 8px}
  #nextsec{padding:10px 14px}
 }
+
+#go[aria-disabled=true]{pointer-events:none}
+#sampleNote{max-width:1150px;margin:0 auto 10px}
