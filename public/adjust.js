@@ -1,6 +1,6 @@
 let S,sel=0;
 const SL=[['b','Kecerahan',50,150],['c','Kontras',50,150],['s','Saturasi',0,200]];
-const keep=()=>{setState({adj:S.adj});pbSync({adj:S.adj})};let tm=0;const live=()=>{if(tm)return;tm=setTimeout(()=>{tm=0;pbSync({adj:S.adj})},60)};
+const keep=()=>{setState({adj:S.adj});pbSync({adj:S.adj})};let lt=0,lp=null;const liveOne=(i,k,v)=>{lp={i,k,v};if(lt)return;lt=setTimeout(()=>{lt=0;pbEv('adj',lp)},30)};let tm=0;const live=()=>{if(tm)return;tm=setTimeout(()=>{tm=0;pbSync({adj:S.adj})},60)};
 const paintBig=()=>{const x=$('#big').getContext('2d');x.clearRect(0,0,640,480);drawPhoto(x,S.imgs[sel],S.adj[sel],0,0,640,480)};
 const paintThumb=i=>{const c=document.querySelectorAll('#thumbs canvas')[i],x=c.getContext('2d');drawPhoto(x,S.imgs[i],S.adj[i],0,0,c.width,c.height)};
 function drawThumbs(){$('#thumbs').innerHTML=S.imgs.map((_,i)=>`<button class="thumb" data-i="${i}" aria-label="Foto ${i+1}" aria-pressed="${i===sel}"><canvas width="160" height="120"></canvas></button>`).join('');
@@ -12,7 +12,7 @@ function drawControls(){
   $('#filNote').hidden=canFilter;$('#all').disabled=$('#reset').disabled=!canFilter;
   document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.adj[sel].f=b.dataset.f;keep();sync()});
   document.querySelectorAll('[data-k]').forEach(r=>{
-    r.oninput=()=>{S.adj[sel][r.dataset.k]=+r.value;$('#o'+r.dataset.k).textContent=r.value+'%';paintBig();paintThumb(sel);live()};
+    r.oninput=()=>{S.adj[sel][r.dataset.k]=+r.value;$('#o'+r.dataset.k).textContent=r.value+'%';paintBig();paintThumb(sel);liveOne(sel,r.dataset.k,+r.value)};
     r.onchange=keep});
   $('#reset').onclick=()=>{S.adj[sel]=adjOf();keep();sync()};
   $('#all').onclick=()=>{S.adj=S.adj.map(()=>({...S.adj[sel]}));keep();S.imgs.forEach((_,i)=>paintThumb(i));$('#all').textContent='Sudah diterapkan ke semua';setTimeout(()=>$('#all').textContent='Terapkan ke semua foto',1800)}}
@@ -23,4 +23,5 @@ function sync(){const a=S.adj[sel];$('#who').textContent=`(foto ${sel+1} dari ${
 loadStrip().then(s=>{S=s;$('#msg').hidden=true;$('#ui').hidden=false;drawThumbs();drawControls();sync()}).catch(stripError);
 
 if(PBR)PBR.hook={sync:p=>{if(p.adj&&S){S.adj=p.adj.map(adjOf);S.imgs.forEach((_,i)=>paintThumb(i));sync()}},
-  ev:(n,d)=>{if(n==='sel'&&S&&S.imgs[d]){sel=d;document.querySelectorAll('.thumb').forEach((t,i)=>t.setAttribute('aria-pressed',i===sel));sync()}}};
+  ev:(n,d)=>{if(n==='adj'&&S&&S.adj[d.i]){S.adj[d.i][d.k]=d.v;if(d.i===sel)sync();else paintThumb(d.i)}
+    else if(n==='sel'&&S&&S.imgs[d]){sel=d;document.querySelectorAll('.thumb').forEach((t,i)=>t.setAttribute('aria-pressed',i===sel));sync()}}};
