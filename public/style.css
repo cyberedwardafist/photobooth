@@ -276,3 +276,20 @@ dialog{margin:auto}
 .leave{width:min(440px,92vw);padding:24px;text-align:left}
 .leave h3{font-size:24px;margin-bottom:8px}.leave p{margin-bottom:18px}
 .leave .row{flex-wrap:wrap}.leave .btn{flex:1;min-width:150px}
+
+.mreset{display:none}.progrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#slotwrap{position:relative}
+.stage.floating{position:absolute;z-index:3;aspect-ratio:auto;border-radius:10px;box-shadow:0 0 0 3px var(--blue);pointer-events:none}
+.stage.floating .count{font-size:clamp(28px,34%,64px);text-shadow:0 2px 8px rgba(0,0,0,.55)}
+@media(max-width:600px){
+ .pb{overflow:visible}
+ .pb .slots{--fit:330px}
+ .progrow .mreset{display:inline-flex;min-height:36px;font-size:14px}
+ #ctrls,#nextsec{position:sticky;bottom:0;z-index:6;background:#fff;border-radius:0 0 14px 14px;box-shadow:0 -8px 18px rgba(30,45,90,.14)}
+ #ctrls{grid-template-columns:2fr 1fr;gap:8px;padding:10px 14px}
+ #ctrls .seg{grid-column:1/-1}#ctrls .seg button{min-height:40px}
+ #ctrls #left,#ctrls #reset{display:none}
+ #ctrls .btn.big,#nextsec .btn.big{min-height:46px}
+ #ctrls label.btn{padding:0 8px}
+ #nextsec{padding:10px 14px}
+}
