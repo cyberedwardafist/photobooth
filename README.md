@@ -40,3 +40,6 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 
 ## Logo
 `public/logo-mark.svg` (bilik saja, dipakai di navigasi dan sebagai favicon) dan `public/logo.svg` (ilustrasi penuh) berasal dari desain "Ilustrasi Photobooth". Animasinya (lampu berkedip, strip melayang) ikut di dalam SVG dan berhenti otomatis kalau pengguna memilih `prefers-reduced-motion`.
+
+## Beranda
+`index.html` + `home.js`: hero dengan ilustrasi bilik, deretan frame berjalan (digambar dari `FRAMES` dengan foto contoh, jadi frame baru otomatis ikut tampil), cara kerja, fitur, dan ajakan penutup. Jumlah frame di ringkasan hero juga otomatis dari `FRAMES.length`. Animasi mati bila pengguna memilih kurangi gerakan.

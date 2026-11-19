@@ -3,17 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>photobooth</title>
+<title>photobooth | strip foto, live foto, dan animasi gratis</title>
+<meta name="description" content="Photobooth online gratis tanpa akun: ambil foto dari kamera, pilih frame lucu, lalu unduh strip, animasi, dan live foto.">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo-mark.svg">
 <link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js")</script>
 </head>
+<body>
 <body>
 <header class="hero">
   <nav><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html" aria-current="page">Home</a><a href="template.html">Template</a></div></nav>
-  <h1>Photobooth di stasiun tepi laut</h1>
-  <p>Foto berempat dalam satu strip, dari kamera atau galeri. Tanpa akun, langsung unduh PNG.</p>
-  <a class="btn" href="foto.html">Mulai memotret</a>
+  <div class="hero-in">
+    <div class="hero-txt">
+      <p class="chip-top">Gratis · tanpa akun · foto tidak diunggah</p>
+      <h1>Photobooth di stasiun tepi laut</h1>
+      <p class="lead">Ambil foto dari kamera atau galeri, atur tiap foto, pilih frame yang lucu, lalu unduh sebagai strip, animasi, atau live foto.</p>
+      <div class="cta-row"><a class="btn big-cta" href="foto.html">Mulai memotret</a><a class="btn alt big-cta" href="template.html">Lihat semua frame</a></div>
+      <ul class="facts" aria-label="Ringkasan"><li><b>7</b> tata letak</li><li><b id="nFrames">12</b> frame</li><li><b>5</b> jenis hasil</li></ul>
+    </div>
+    <div class="hero-art">
+      <svg class="spk s1" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg><svg class="spk s2" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg><svg class="spk s3" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg>
+      <img src="logo.svg" alt="Ilustrasi bilik photobooth dengan tirai biru, lampu menyala, dan strip foto melayang" width="480" height="480">
+    </div>
+  </div>
   <svg class="scene" viewBox="0 0 1200 380" role="img" aria-label="Kereta kecil bermuka senang melaju di tepi laut, awan berarak, kelopak sakura jatuh">
     <g class="cloud" fill="#fff"><ellipse cx="200" cy="70" rx="70" ry="24"/><ellipse cx="240" cy="55" rx="50" ry="26"/><ellipse cx="165" cy="62" rx="40" ry="20"/></g>
     <g class="cloud b" fill="#DBE2F8"><ellipse cx="520" cy="130" rx="80" ry="22"/><ellipse cx="560" cy="114" rx="52" ry="24"/></g>
@@ -45,9 +58,28 @@
     </g>
   </svg>
 </header>
+<main>
+<section class="showcase" aria-labelledby="hF">
+  <div class="sec-head rv"><h2 id="hF">Pilih frame yang paling kamu banget</h2><p>Semua desain ini siap dipakai. Pratinjau di bawah memakai foto contoh.</p></div>
+  <div class="marquee" id="mq" aria-label="Contoh frame yang tersedia"><div class="mtrack" id="mtrack"></div></div>
+  <p class="center rv"><a class="btn" href="template.html">Lihat semua frame</a></p>
+</section>
+<section class="how alt" aria-labelledby="hH">
+  <div class="sec-head rv"><h2 id="hH">Empat langkah, selesai</h2><p>Dari foto pertama sampai file siap dibagikan.</p></div>
+  <ol class="steps-grid"><li class="step c0 rv"><span class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l1.5-2.5h7L17 8h4v11H3z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span><span class="snum">1</span><h3>Ambil foto</h3><p>Pakai kamera atau unggah dari galeri. Pilih tata letak dari 1×1 sampai 3×3, atau jepret dengan hitung mundur 3 detik.</p></li><li class="step c1 rv"><span class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span class="snum">2</span><h3>Atur tiap foto</h3><p>Beri filter, ubah kecerahan, kontras, dan saturasi untuk setiap foto, tanpa memikirkan frame dulu.</p></li><li class="step c2 rv"><span class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><rect x="7.5" y="6.5" width="9" height="5" rx="1"/><rect x="7.5" y="13" width="9" height="3" rx="1"/></svg></span><span class="snum">3</span><h3>Pilih frame</h3><p>Bandingkan semua desain frame langsung dengan fotomu, saring per kategori, lalu pilih yang paling cocok.</p></li><li class="step c3 rv"><span class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/></svg></span><span class="snum">4</span><h3>Unduh hasilnya</h3><p>Pilih sendiri yang mau diunduh: strip, foto satuan, animasi, live foto, atau frame video. Tiap hasil satu file.</p></li></ol>
+</section>
+<section class="feats" aria-labelledby="hX">
+  <div class="sec-head rv"><h2 id="hX">Hasilnya bukan cuma foto</h2><p>Satu sesi memotret bisa jadi banyak kenangan.</p></div>
+  <ul class="feat-grid"><li class="feat rv"><span class="fico c0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><path d="M12 2.5v1.5M12 20v1.5M2.5 12H4M20 12h1.5"/></svg></span><div><h3>Live foto</h3><p>Setiap jepretan merekam gerakan sekitar 2 detik, jadi fotomu bisa hidup kembali.</p></div></li><li class="feat rv"><span class="fico c1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a6 6 0 0 1 10.5-4M20 12a6 6 0 0 1-10.5 4"/><path d="M15 4v4h-4M9 20v-4h4"/></svg></span><div><h3>Animasi foto</h3><p>Semua fotomu tampil bergantian dan berulang, siap dijadikan status atau cerita.</p></div></li><li class="feat rv"><span class="fico c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10.5l5-3v9l-5-3"/></svg></span><div><h3>Frame video</h3><p>Strip lengkap dengan frame, tiap fotonya bergerak sebagai live foto.</p></div></li><li class="feat rv"><span class="fico c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div><h3>Tetap privat</h3><p>Foto diproses di browsermu dan tidak diunggah ke server. Tanpa akun, tanpa daftar.</p></div></li></ul>
+</section>
+<section class="cta-band" aria-labelledby="hC">
+  <div class="cta-in rv"><div><h2 id="hC">Siap bergaya?</h2><p>Kameramu sudah menunggu. Hanya butuh satu menit untuk strip pertamamu.</p><a class="btn alt big-cta" href="foto.html">Mulai memotret</a></div>
+  <img class="cta-img" src="logo-mark.svg" alt="" width="150" height="223"></div>
+</section>
+</main>
 <footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
 <script src="common.js"></script>
-
-<script>document.querySelectorAll('a[href="foto.html"]').forEach(a=>a.addEventListener("click",()=>setState({frame:undefined,bg:undefined,ink:undefined})))</script>
+<script src="frames.js"></script>
+<script src="home.js"></script>
 </body>
 </html>

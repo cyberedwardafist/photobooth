@@ -40,3 +40,8 @@ function renderStrip(cv,o){const f=frameFull(o.frame),[c]=LAY[o.lay],w=360,h=270
     if(f.bw){x.strokeStyle=f.bc||f.ink;x.lineWidth=f.bw;rr(x,px+f.bw/2,py+f.bw/2,w-f.bw,h-f.bw,Math.max(0,f.r-f.bw/2));x.stroke()}});
   x.fillStyle=f.ink;x.textAlign='center';x.font='600 36px Fredoka,sans-serif';x.fillText('photobooth',W/2,H-62);
   x.font='700 22px Nunito,sans-serif';x.fillText(new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),W/2,H-26)}
+
+/* foto contoh untuk etalase (siluet) */
+const sample=i=>{const c=document.createElement('canvas');c.width=640;c.height=480;const x=c.getContext('2d'),P=['#C9D6F2','#F2D9C9','#D3E6CB','#EBCFE0'],g=x.createLinearGradient(0,0,640,480);
+  g.addColorStop(0,P[i%4]);g.addColorStop(1,'#FFFFFF');x.fillStyle=g;x.fillRect(0,0,640,480);
+  x.fillStyle='rgba(30,45,90,.35)';x.beginPath();x.arc(320,205,78,0,7);x.fill();x.beginPath();x.ellipse(320,480,170,150,0,Math.PI,0);x.fill();return c};
