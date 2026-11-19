@@ -102,5 +102,4 @@ loadStrip().then(async s=>{S=s;frame=frameOf(s.st);
   clips=await Promise.all(s.imgs.map(async(_,i)=>{try{const c=await clipGet(i);if(!c||!c.blobs||c.blobs.length<4)return null;
     return{frames:await Promise.all(c.blobs.map(b=>createImageBitmap(b))),key:c.key}}catch{return null}}));
   $('#fname').textContent=frame.name;build();$('#msg').hidden=true;$('#ui').hidden=false;drawRes();
-  cards.forEach(c=>io&&io.observe(c.cv));requestAnimationFrame(tick);
-  $('#fresh').onclick=()=>{try{sessionStorage.removeItem(KEY)}catch{}clipClear().catch(()=>{}).finally(()=>location.href='foto.html')}}).catch(stripError);
+  cards.forEach(c=>io&&io.observe(c.cv));requestAnimationFrame(tick);}).catch(stripError);
