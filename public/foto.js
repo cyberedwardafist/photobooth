@@ -11,6 +11,7 @@ function placeStage(){const st=document.querySelector('.stage'),wrap=$('#slotwra
     Object.assign(st.style,{left:a.left-b.left+'px',top:a.top-b.top+'px',width:a.width+'px',height:a.height+'px'});st.classList.add('floating');st.hidden=false}
   else if(stream){st.classList.remove('floating');st.hidden=true}
   else{st.classList.remove('floating');st.removeAttribute('style');st.hidden=false}}
+function focusSlot(){if(!mq.matches)return;requestAnimationFrame(()=>{const sw=document.querySelectorAll('#slots .sw')[cur];if(sw)sw.scrollIntoView({block:'center',behavior:'smooth'})})}
 function moveStage(){const st=document.querySelector('.stage'),to=mq.matches?$('#slotwrap'):document.querySelector('.booth');
   if(st.parentNode!==to){to.prepend(st);const v=$('#cam');if(v.srcObject)v.play().catch(()=>{})}placeStage()}
 mq.addEventListener('change',moveStage);
@@ -32,7 +33,7 @@ function toCanvas(src,sw,sh,mirror,W=640,H=480){const c=document.createElement('
   if(sw/sh>r)w=sh*r;else h=sw/r;if(mirror){x.translate(W,0);x.scale(-1,1)}x.drawImage(src,(sw-w)/2,(sh-h)/2,w,h,0,0,W,H);return c}
 const gen=[];let ring=[],liveBusy=0;
 const bump=i=>{gen[i]=(gen[i]||0)+1;clipDel(i).catch(()=>{})};
-function put(c){const i=cur;bump(i);photos[i]=c;adj[i]=null;sel=-1;const nx=photos.indexOf(null);cur=nx>=0?nx:cur;persist();drawSlots();return i}
+function put(c){const i=cur;bump(i);photos[i]=c;adj[i]=null;sel=-1;const nx=photos.indexOf(null);cur=nx>=0?nx:cur;persist();drawSlots();focusSlot();return i}
 /* klip live: simpan ±1 detik sebelum dan sesudah jepretan, hanya untuk foto dari kamera */
 const snap=()=>{const v=$('#cam');return stream&&v.videoWidth?toCanvas(v,v.videoWidth,v.videoHeight,true,LIVE.W,LIVE.H):null};
 setInterval(()=>{const c=snap();if(c){ring.push(c);if(ring.length>LIVE.PRE)ring.shift()}else ring=[]},1000/LIVE.FPS);

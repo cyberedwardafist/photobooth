@@ -283,7 +283,7 @@ dialog{margin:auto}
 .stage.floating .count{font-size:clamp(28px,34%,64px);text-shadow:0 2px 8px rgba(0,0,0,.55)}
 @media(max-width:600px){
  .pb{overflow:visible}
- .pb .slots{--fit:330px}
+ .pb .slots{--fit:420px;--min:190px}
  .progrow .mreset{display:inline-flex;min-height:36px;font-size:14px}
  #ctrls,#nextsec{position:sticky;bottom:0;z-index:6;background:#fff;border-radius:0 0 14px 14px;box-shadow:0 -8px 18px rgba(30,45,90,.14)}
  #ctrls{grid-template-columns:2fr 1fr;gap:8px;padding:10px 14px}
