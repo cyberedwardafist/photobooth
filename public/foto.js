@@ -82,19 +82,22 @@ const cover=(v,x,y,w,h,m)=>coverOn(mx,v,v.videoWidth,v.videoHeight,x,y,w,h,m);
 let seg=null,segState=0,personHi=null,vscore=0,votes=0;const cuts=new Map(),mc=document.createElement('canvas'),mcx=mc.getContext('2d');
 async function loadSeg(){if(segState)return;segState=1;fillSel();
   try{const V='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14',M=await import(V+'/vision_bundle.mjs'),fs=await M.FilesetResolver.forVisionTasks(V+'/wasm');
-    const mk=d=>M.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',delegate:d},runningMode:'IMAGE',outputCategoryMask:true,outputConfidenceMasks:false});
+    const mk=d=>M.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',delegate:d},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
     try{seg=await mk('GPU')}catch{seg=await mk('CPU')}segState=2}catch{segState=3}fillSel()}
 function cutout(id,v,mirror){let c=cuts.get(id);if(!c){c={cv:document.createElement('canvas'),t:0};c.cv.width=640;c.cv.height=480;cuts.set(id,c)}
   const now=performance.now();if(now-c.t<70||!v.videoWidth)return c;c.t=now;
-  try{seg.segment(v,r=>{const m=r.categoryMask;if(!m)return;const w=m.width,h=m.height,a=m.getAsUint8Array();
-    let cen=0,cn=0,cor=0,kn=0;for(let y=0;y<h;y+=8)for(let x=0;x<w;x+=8){const hi=a[y*w+x]>0?1:0,fx=x/w,fy=y/h;
-      if(fx>.35&&fx<.65&&fy>.5&&fy<.95){cen+=hi;cn++}else if(fy<.25&&(fx<.15||fx>.85)){cor+=hi;kn++}}
-    const sc=(cn?cen/cn:0)-(kn?cor/kn:0);if(personHi===null){vscore+=sc;if(++votes>=8)personHi=vscore>0}
-    const ph=personHi===null?sc>0:personHi;
+  try{seg.segment(v,r=>{const ms=r.confidenceMasks;if(!ms||!ms.length)return;const w=ms[0].width,h=ms[0].height,arrs=ms.map(m=>m.getAsFloat32Array());
+    /* skor: rata-rata di tengah-bawah dikurangi sudut atas; mask orang = skor tertinggi */
+    const score=a=>{let cen=0,cn=0,cor=0,kn=0;for(let y=0;y<h;y+=8)for(let x=0;x<w;x+=8){const p=a[y*w+x],fx=x/w,fy=y/h;
+      if(fx>.35&&fx<.65&&fy>.5&&fy<.95){cen+=p;cn++}else if(fy<.25&&(fx<.15||fx>.85)){cor+=p;kn++}}return(cn?cen/cn:0)-(kn?cor/kn:0)};
+    let best=0,bs=-9;arrs.forEach((a,i)=>{const s=score(a);if(s>bs){bs=s;best=i}});const a=arrs[best];
+    let inv=false;if(arrs.length===1){if(personHi===null){vscore+=bs;if(++votes>=8)personHi=vscore>0}inv=!(personHi===null?bs>0:personHi)}
+    let on=0,tot=0;for(let q=0;q<w*h;q+=37){tot++;if((inv?1-a[q]:a[q])>.5)on++}
+    if(on/tot<.02||on/tot>.98)return;/* mask tidak valid: jangan tampilkan seluruh frame */
     if(mc.width!==w||mc.height!==h){mc.width=w;mc.height=h}
-    const im=mcx.createImageData(w,h),d=im.data;for(let q=0;q<w*h;q++)d[q*4+3]=((a[q]>0)===ph)?255:0;mcx.putImageData(im,0,0);
+    const im=mcx.createImageData(w,h),d=im.data;for(let q=0;q<w*h;q++){const p=inv?1-a[q]:a[q];d[q*4+3]=Math.max(0,Math.min(255,(p-.3)/.4*255))}mcx.putImageData(im,0,0);
     const x=c.cv.getContext('2d');x.clearRect(0,0,640,480);x.globalCompositeOperation='source-over';coverOn(x,v,v.videoWidth,v.videoHeight,0,0,640,480,mirror);
-    x.globalCompositeOperation='destination-in';if(canFilter)x.filter='blur(1.5px)';coverOn(x,mc,w,h,0,0,640,480,mirror);x.filter='none';x.globalCompositeOperation='source-over'})}catch{}
+    x.globalCompositeOperation='destination-in';coverOn(x,mc,w,h,0,0,640,480,mirror);x.globalCompositeOperation='source-over'})}catch{}
   return c}
 function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
   if(!ids.includes(bgId))bgId='me';mx.fillStyle='#1E2D5A';mx.fillRect(0,0,640,480);
