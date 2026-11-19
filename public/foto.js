@@ -18,13 +18,13 @@ mq.addEventListener('change',moveStage);
 new ResizeObserver(()=>placeStage()).observe($('#slotwrap'));
 function layoutIcon(k){const [c,r]=LAY[k],w=18/c,h=18/r;let s='';for(let i=0;i<c*r;i++)s+=`<rect x="${2+(i%c)*w+.6}" y="${2+Math.floor(i/c)*h+.6}" width="${w-1.2}" height="${h-1.2}" rx="1.5" fill="currentColor"/>`;return `<svg viewBox="0 0 22 22" aria-hidden="true">${s}</svg>`}
 function drawLayouts(){$('#layouts').innerHTML=Object.keys(LAY).map(k=>`<button class="chip" data-k="${k}" aria-pressed="${k===lay}">${layoutIcon(k)}${k.replace('x',' × ')}</button>`).join('');
-  document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{lay=b.dataset.k;sel=-1;photos=Array.from({length:count()},(_,i)=>photos[i]||null);adj=Array.from({length:count()},(_,i)=>adj[i]||null);for(let k=count();k<9;k++)bump(k);cur=Math.max(0,photos.indexOf(null));persist();drawLayouts();drawSlots()})}
+  document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{if(G){pbEv('lay',b.dataset.k);return}lay=b.dataset.k;sel=-1;photos=Array.from({length:count()},(_,i)=>photos[i]||null);adj=Array.from({length:count()},(_,i)=>adj[i]||null);for(let k=count();k<9;k++)bump(k);cur=Math.max(0,photos.indexOf(null));persist();drawLayouts();drawSlots()})}
 function drawSlots(){
   {const [c,r]=LAY[lay],el=$('#slots');el.style.setProperty('--c',c);el.style.setProperty('--r',r)}
   $('#slots').innerHTML=photos.map((p,i)=>`<div class="sw${p&&i===sel?' on':''}"><button class="slot" data-i="${i}" aria-label="Slot ${i+1}${p?', terisi':', kosong'}" ${i===(sel>=0?sel:cur)?'aria-current="true"':''}>${p?`<img alt="" src="${p.toDataURL('image/jpeg',.5)}">`:'Kosong'}</button>${p?`<button class="retake" data-r="${i}" aria-label="Ulangi foto ${i+1}"><span><svg viewBox="0 0 16 16" fill="none" stroke="#1E2D5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.8-4.1"/><path d="M13 1.5v3.4H9.6"/></svg></span></button>`:''}</div>`).join('');
   const back=i=>{const el=document.querySelector(`.slot[data-i="${i}"]`);if(el)el.focus()};
-  document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(photos[i]){sel=sel===i?-1:i}else{cur=i;sel=-1}drawSlots();back(i)});
-  document.querySelectorAll('.retake').forEach(b=>b.onclick=()=>{const i=+b.dataset.r;photos[i]=null;adj[i]=null;bump(i);cur=i;sel=-1;persist();drawSlots();back(i)});
+  document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(photos[i]){sel=sel===i?-1:i}else{cur=i;sel=-1}pbEv('sel',{sel,cur});drawSlots();back(i)});
+  document.querySelectorAll('.retake').forEach(b=>b.onclick=()=>{const i=+b.dataset.r;if(G){pbEv('retake',i);return}photos[i]=null;adj[i]=null;bump(i);cur=i;sel=-1;persist();drawSlots();back(i)});
   const n=photos.filter(Boolean).length,full=n===photos.length;$('#prog').textContent=`${cur+1} / ${photos.length}`;
   $('#ctrls').hidden=full;$('#nextsec').hidden=!full;$('#shoot').disabled=!stream||busy;
   $('#shootT').textContent=`Ambil foto ${cur+1} / ${photos.length}`;
@@ -53,7 +53,7 @@ async function startCam(){if(PBR&&PBR.stream){stream=PBR.stream;$('#cam').srcObj
   drawSlots();if(stream&&!room)initRoom()}
 $('#retry').onclick=startCam;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-$('#shoot').onclick=async()=>{if(!stream||busy)return;busy=true;$('#shoot').disabled=true;
+$('#shoot').onclick=async()=>{if(G){pbEv('shootreq');return}if(!stream||busy)return;busy=true;$('#shoot').disabled=true;
   pbEv('shoot',delay);await cd(delay);
   busy=false;const i=put(grab(640,480));recordLive(i,gen[i])};
 $('#t0').onclick=()=>{delay=0;pbEv('delay',0);$('#t0').setAttribute('aria-pressed','true');$('#t3').setAttribute('aria-pressed','false')};
@@ -124,10 +124,16 @@ function setMix(on){if(on===mixOn)return;mixOn=on;$('#mix').hidden=!on;if(on){lo
 const G=!!PBR&&PBR.role==='guest',gid=k=>k==='me'?room.self:k;
 async function cd(n){for(let i=n;i>0;i--){$('#count').textContent=i;await wait(1000)}$('#count').textContent=''}
 function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#ccode').textContent=room.code;
-  if(G){$('#gnote').hidden=false;['#layouts','#slotwrap','#ctrls','#reset2','#bgrow','#nextsec'].forEach(s=>{const x=$(s);if(x)x.inert=true})}
+  if(G){$('#gnote').hidden=false;['#reset2','#bgrow','#nextsec','#ctrls .seg','#ctrls label.btn','#reset'].forEach(s=>{const x=document.querySelector(s);if(x)x.inert=true})}
   PBR.hook={members:fillSel,sync:p=>{if(G)applyRemote(p)},ev:(n,d)=>{
-    if(n==='hello'&&!G){pbEv('bg',gid(bgId));pbEv('delay',delay);persist()}
-    else if(G){if(n==='shoot')cd(d);else if(n==='delay'){delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)}
+    if(n==='sel'){if(d&&d.sel<photos.length){sel=d.sel;cur=d.cur;drawSlots()}}
+    else if(!G){
+      if(n==='hello'){pbEv('bg',gid(bgId));pbEv('delay',delay);persist()}
+      else if(n==='lay'){const b=document.querySelector(`[data-k="${d}"]`);if(b)b.click()}
+      else if(n==='shootreq'){if(stream&&!busy&&!$('#shoot').disabled)$('#shoot').click()}
+      else if(n==='retake'){const i=d;if(photos[i]){photos[i]=null;adj[i]=null;bump(i);cur=i;sel=-1;persist();drawSlots()}}}
+    else{if(n==='shoot'){busy=true;drawSlots();cd(d).then(()=>{busy=false;drawSlots()})}
+      else if(n==='delay'){delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)}
       else if(n==='bg'){bgId=d===room.self?'me':d;paintPick()}}}};
   fillSel();if(G)pbEv('hello')}
 async function applyRemote(p){if(p.lay===undefined&&p.photos===undefined)return;if(LAY[p.lay])lay=p.lay;const n=count(),src=p.photos||[];
