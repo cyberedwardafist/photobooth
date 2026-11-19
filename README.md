@@ -31,3 +31,6 @@ Pengaturan per foto disimpan di `sessionStorage` (`adj`), dan otomatis di-reset 
 
 ## Live foto
 Saat memotret lewat kamera, `foto.js` merekam klip ±2 detik (320x240, 12 fps) per slot dan menyimpannya di IndexedDB (database `pb`). Foto yang diunggah tidak punya klip, jadi tidak ada live foto/frame video untuknya. Video dibuat di peramban dengan MediaRecorder (MP4 bila didukung, kalau tidak WebM), direkam real-time sehingga tab harus tetap terbuka.
+
+## Penjaga keluar
+Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) menampilkan konfirmasi; memilih "Ya, keluar" menghapus foto dan klip live (mulai dari awal). Pindah antar langkah (foto, atur foto, frame, unduh, Template) tidak diganggu. Menutup tab, memuat ulang, atau tombol back peramban memakai peringatan bawaan peramban (`beforeunload`), yang teksnya tidak bisa diubah. Logikanya ada di akhir `public/common.js`.

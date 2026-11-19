@@ -29,3 +29,22 @@ const clipPut=(i,v)=>idbDo('readwrite',s=>s.put(v,i));
 const clipGet=i=>idbDo('readonly',s=>s.get(i));
 const clipDel=i=>idbDo('readwrite',s=>s.delete(i));
 const clipClear=()=>idbDo('readwrite',s=>s.clear());
+
+/* Penjaga keluar: kalau sudah ada foto, keluar dari alur harus dikonfirmasi karena semuanya mulai dari awal */
+const FLOWP=['foto','adjust','edit','unduh','template'];
+const hasPhotos=()=>(getState().photos||[]).some(Boolean);
+let leaveSkip=false;const pbSkip=()=>{leaveSkip=true};
+const pageOf=u=>u.pathname.split('/').pop().replace(/\.html$/,'')||'index';
+function askLeave(dest){let d=document.getElementById('leave');
+  if(!d){d=document.createElement('dialog');d.id='leave';d.className='leave';d.setAttribute('aria-labelledby','leaveT');
+    d.innerHTML='<h3 id="leaveT">Yakin mau keluar?</h3><p>Foto yang sudah kamu ambil akan hilang. Kalau keluar, kamu harus mengulang dari awal.</p><div class="row"><button class="btn" id="leaveStay" autofocus>Tetap di sini</button><button class="btn alt" id="leaveGo">Ya, keluar</button></div>';
+    document.body.append(d);d.querySelector('#leaveStay').onclick=()=>d.close()}
+  d.querySelector('#leaveGo').onclick=async()=>{try{sessionStorage.removeItem(KEY)}catch{}leaveSkip=true;try{await clipClear()}catch{}location.href=dest};
+  if(!d.open)d.showModal()}
+document.addEventListener('click',e=>{if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  const a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.target&&a.target!=='_self')||a.hasAttribute('download')||a.getAttribute('aria-disabled')==='true')return;
+  const u=new URL(a.href,location.href);if(u.origin!==location.origin||(u.pathname===location.pathname&&u.hash))return;
+  if(FLOWP.includes(pageOf(u))){leaveSkip=true;return}
+  if(hasPhotos()){e.preventDefault();askLeave(a.href)}});
+window.addEventListener('beforeunload',e=>{if(leaveSkip||!hasPhotos())return;e.preventDefault();e.returnValue=''});
+window.addEventListener('pageshow',()=>{leaveSkip=false});
