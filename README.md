@@ -37,3 +37,6 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 
 ## Library template
 `template.html` adalah etalase: semua frame tampil dengan foto contoh. Klik satu frame -> pilihan disimpan (`state.frame`) lalu langsung ke `foto.html`; di langkah Pilih frame, frame itu sudah terpilih dan bisa diganti. Tombol "Mulai memotret" di Home dan tombol "tanpa memilih frame" menghapus pilihan itu, jadi alur langsung tidak membawa frame lama.
+
+## Logo
+`public/logo-mark.svg` (bilik saja, dipakai di navigasi dan sebagai favicon) dan `public/logo.svg` (ilustrasi penuh) berasal dari desain "Ilustrasi Photobooth". Animasinya (lampu berkedip, strip melayang) ikut di dalam SVG dan berhenti otomatis kalau pengguna memilih `prefers-reduced-motion`.
