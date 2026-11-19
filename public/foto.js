@@ -74,19 +74,40 @@ let room=null,mixOn=false,bgId='me',autoMix=false;const vids=new Map();
 const mixC=$('#mix'),mx=mixC.getContext('2d');mixC.width=640;mixC.height=480;
 function vidFor(id){if(id==='me')return $('#cam');const m=room&&room.members.get(id);if(!m||!m.stream)return null;let v=vids.get(id);
   if(!v||v.srcObject!==m.stream){v=document.createElement('video');v.muted=true;v.playsInline=true;v.srcObject=m.stream;v.play().catch(()=>{});vids.set(id,v)}return v}
-function cover(v,x,y,w,h,mirror){const vw=v.videoWidth,vh=v.videoHeight;if(!vw)return;let sw=vw,sh=vh;if(vw/vh>w/h)sw=vh*w/h;else sh=vw*h/w;
-  mx.save();mx.beginPath();mx.rect(x,y,w,h);mx.clip();if(mirror){mx.translate(x+w,y);mx.scale(-1,1)}else mx.translate(x,y);mx.drawImage(v,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,w,h);mx.restore()}
+function coverOn(x,src,vw,vh,px,py,w,h,mirror){if(!vw)return;let sw=vw,sh=vh;if(vw/vh>w/h)sw=vh*w/h;else sh=vw*h/w;
+  x.save();x.beginPath();x.rect(px,py,w,h);x.clip();if(mirror){x.translate(px+w,py);x.scale(-1,1)}else x.translate(px,py);x.drawImage(src,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,w,h);x.restore()}
+const cover=(v,x,y,w,h,m)=>coverOn(mx,v,v.videoWidth,v.videoHeight,x,y,w,h,m);
+/* pemisah orang dari latar (MediaPipe selfie segmenter, dimuat dari CDN saat Gabung kamera dinyalakan) */
+let seg=null,segState=0,personHi=null,vscore=0,votes=0;const cuts=new Map(),mc=document.createElement('canvas'),mcx=mc.getContext('2d');
+async function loadSeg(){if(segState)return;segState=1;fillSel();
+  try{const V='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14',M=await import(V+'/vision_bundle.mjs'),fs=await M.FilesetResolver.forVisionTasks(V+'/wasm');
+    const mk=d=>M.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',delegate:d},runningMode:'IMAGE',outputCategoryMask:true,outputConfidenceMasks:false});
+    try{seg=await mk('GPU')}catch{seg=await mk('CPU')}segState=2}catch{segState=3}fillSel()}
+function cutout(id,v,mirror){let c=cuts.get(id);if(!c){c={cv:document.createElement('canvas'),t:0};c.cv.width=640;c.cv.height=480;cuts.set(id,c)}
+  const now=performance.now();if(now-c.t<70||!v.videoWidth)return c;c.t=now;
+  try{seg.segment(v,r=>{const m=r.categoryMask;if(!m)return;const w=m.width,h=m.height,a=m.getAsUint8Array();
+    let cen=0,cn=0,cor=0,kn=0;for(let y=0;y<h;y+=8)for(let x=0;x<w;x+=8){const hi=a[y*w+x]>0?1:0,fx=x/w,fy=y/h;
+      if(fx>.35&&fx<.65&&fy>.5&&fy<.95){cen+=hi;cn++}else if(fy<.25&&(fx<.15||fx>.85)){cor+=hi;kn++}}
+    const sc=(cn?cen/cn:0)-(kn?cor/kn:0);if(personHi===null){vscore+=sc;if(++votes>=8)personHi=vscore>0}
+    const ph=personHi===null?sc>0:personHi;
+    if(mc.width!==w||mc.height!==h){mc.width=w;mc.height=h}
+    const im=mcx.createImageData(w,h),d=im.data;for(let q=0;q<w*h;q++)d[q*4+3]=((a[q]>0)===ph)?255:0;mcx.putImageData(im,0,0);
+    const x=c.cv.getContext('2d');x.clearRect(0,0,640,480);x.globalCompositeOperation='source-over';coverOn(x,v,v.videoWidth,v.videoHeight,0,0,640,480,mirror);
+    x.globalCompositeOperation='destination-in';if(canFilter)x.filter='blur(1.5px)';coverOn(x,mc,w,h,0,0,640,480,mirror);x.filter='none';x.globalCompositeOperation='source-over'})}catch{}
+  return c}
 function mixLoop(){if(!mixOn)return;const ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
   if(!ids.includes(bgId))bgId='me';mx.fillStyle='#1E2D5A';mx.fillRect(0,0,640,480);
   const bg=vidFor(bgId);if(bg)cover(bg,0,0,640,480,bgId==='me');
-  const rest=ids.filter(k=>k!==bgId),w=Math.min(200,(640-20)/Math.max(1,rest.length)-10),h=w*.75,tot=rest.length*(w+10)-10;
-  rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const x=(640-tot)/2+i*(w+10),y=480-h-16;mx.save();rrect(mx,x,y,w,h,14);mx.clip();cover(v,x,y,w,h,k==='me');mx.restore();
-    mx.strokeStyle='#fff';mx.lineWidth=4;rrect(mx,x,y,w,h,14);mx.stroke()});
+  const rest=ids.filter(k=>k!==bgId);
+  if(seg){rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const c=cutout(k,v,k==='me');mx.drawImage(c.cv,(i%2?-1:1)*(Math.floor(i/2)+1)*170,0)})}
+  else{const w=Math.min(200,(640-20)/Math.max(1,rest.length)-10),h=w*.75,tot=rest.length*(w+10)-10;
+    rest.forEach((k,i)=>{const v=vidFor(k);if(!v)return;const x=(640-tot)/2+i*(w+10),y=480-h-16;mx.save();rrect(mx,x,y,w,h,14);mx.clip();cover(v,x,y,w,h,k==='me');mx.restore();
+      mx.strokeStyle='#fff';mx.lineWidth=4;rrect(mx,x,y,w,h,14);mx.stroke()})}
   requestAnimationFrame(mixLoop)}
 function fillSel(){if(!room)return;const s=$('#bgsel'),ids=['me',...[...room.members].filter(([k,m])=>k!==room.self&&m.stream).map(([k])=>k)];
   s.innerHTML=ids.map(k=>`<option value="${k}">${k==='me'?'Kameraku':esc((room.members.get(k)||{}).name||'Teman')}</option>`).join('');s.value=ids.includes(bgId)?bgId:'me';
-  const n=ids.length-1;$('#cinfo').textContent=n?`${n} teman terhubung`:'Menunggu teman terhubung...';$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false);if(n&&!autoMix){autoMix=true;setMix(true)}}
-function setMix(on){mixOn=on;$('#mixbtn').textContent=on?'Kamera digabung (klik untuk matikan)':'Gabung kamera';$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on)mixLoop()}
+  const n=ids.length-1;$('#cinfo').textContent=(n?`${n} teman terhubung`:'Menunggu teman terhubung...')+(mixOn&&segState===1?' • memuat pemisah latar...':mixOn&&segState===3?' • pemisah latar gagal dimuat, kamera tampil sebagai kotak':'');$('#mixbtn').disabled=!n;if(!n&&mixOn)setMix(false);if(n&&!autoMix){autoMix=true;setMix(true)}}
+function setMix(on){mixOn=on;$('#mixbtn').textContent=on?'Kamera digabung (klik untuk matikan)':'Gabung kamera';$('#mixbtn').setAttribute('aria-pressed',on);$('#mix').hidden=!on;$('#bgwrap').hidden=!on;if(on){loadSeg();mixLoop()}}
 async function initRoom(){const info=roomGet();if(!info)return;$('#cbar').hidden=false;$('#ccode').textContent=info.code;
   room=await openRoom({...info,fresh:false},stream,{onChange:R=>{room=R;fillSel()},onError:t=>{$('#cinfo').textContent=t}});if(room.self)fillSel()}
 $('#mixbtn').onclick=()=>setMix(!mixOn);$('#bgsel').onchange=e=>{bgId=e.target.value};
