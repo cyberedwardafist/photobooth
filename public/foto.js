@@ -133,3 +133,9 @@ function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#
 async function applyRemote(p){if(p.lay===undefined&&p.photos===undefined)return;if(LAY[p.lay])lay=p.lay;const n=count(),src=p.photos||[];
   photos=await Promise.all(Array.from({length:n},(_,i)=>src[i]?dataToCanvas(src[i]).catch(()=>null):null));
   adj=Array.from({length:n},(_,i)=>(p.adj||[])[i]||null);cur=Math.max(0,photos.indexOf(null));sel=-1;drawLayouts();drawSlots()}
+
+/* desktop: #ctrls dipindah ke bawah frame kamera */
+const mqD=matchMedia('(min-width:821px)');
+function moveCtrls(){const c=$('#ctrls'),b=document.querySelector('.booth'),p=document.querySelector('.panel.pb');
+  if(mqD.matches){if(c.parentNode!==b)b.insertBefore(c,p)}else if(c.parentNode!==p)p.insertBefore(c,$('#nextsec'))}
+moveCtrls();mqD.addEventListener('change',moveCtrls);
