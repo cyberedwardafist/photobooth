@@ -230,7 +230,7 @@ dialog{margin:auto}
  .booth{gap:12px}.stage{border-radius:14px}.count{font-size:90px}
  .panel{border-radius:14px}.sec{padding:12px 14px}
  .lays{gap:4px}.lays .chip{min-height:54px;font-size:12px}.lays .chip svg{width:26px;height:26px}
- .pb .slots{grid-template-columns:repeat(4,1fr);width:100%;gap:8px}
+ .pb .slots{--g:8px;--fit:250px;--min:64px}
  .pb .slot{border-radius:10px;font-size:12px}
  .btn.big{min-height:48px}
  /* atur foto: foto tetap terlihat saat slider digeser */
