@@ -46,7 +46,7 @@ document.addEventListener('click',e=>{if(e.defaultPrevented||e.button||e.metaKey
   const u=new URL(a.href,location.href);if(u.origin!==location.origin||(u.pathname===location.pathname&&u.hash))return;
   if(FLOWP.includes(pageOf(u))){leaveSkip=true;return}
   if(hasPhotos()){e.preventDefault();askLeave(a.href)}else if(window!==top)a.target='_top'});
-window.addEventListener('beforeunload',e=>{if(window!==top||leaveSkip||!hasPhotos())return;e.preventDefault();e.returnValue=''});
+window.addEventListener('beforeunload',e=>{if(window!==top||window.PBC||leaveSkip||!hasPhotos())return;e.preventDefault();e.returnValue=''});
 window.addEventListener('pageshow',()=>{leaveSkip=false});
 
 /* Connect: halaman ini bisa tampil di dalam ruang (connect.html). PBR = objek ruang milik halaman induk */
