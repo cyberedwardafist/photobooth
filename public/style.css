@@ -181,3 +181,4 @@ legend{font:600 17px Fredoka,sans-serif;margin-bottom:4px}
 .opt.off{opacity:.6;cursor:not-allowed}
 @media(max-width:820px){.dbody{grid-template-columns:1fr}}
 .rsec{padding:0}
+dialog{margin:auto}

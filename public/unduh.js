@@ -33,7 +33,7 @@ function build(){const {imgs,adj,lay}=S,n=imgs.length,anyClip=clips.some(Boolean
 /* galeri */
 function cardEl(it){const b=document.createElement('button');b.className='rcard'+(it.ok?'':' off');b.dataset.id=it.id;
   b.innerHTML=`<span class="rprev">${it.ok?'<canvas aria-hidden="true"></canvas>':`<span class="why">${esc(it.why)}</span>`}${it.ok?`<i class="badge">${it.tag}</i>`:''}</span><span class="rname">${esc(it.label)}</span><span class="rsub">${esc(it.sub)}</span>`;
-  if(it.ok){b.onclick=()=>openDlg(it,true);const cv=b.querySelector('canvas');it.paint(cv,0,it.ps);if(it.anim&&!reduce)cards.push({it,cv,vis:true})}
+  if(it.ok){b.onclick=()=>openDlg(it);const cv=b.querySelector('canvas');it.paint(cv,0,it.ps);if(it.anim&&!reduce)cards.push({it,cv,vis:true})}
   else b.disabled=true;return b}
 function drawRes(){const box=$('#res');box.innerHTML='';const groups=[...new Set(items.map(i=>i.grp))];
   groups.forEach(g=>{const list=items.filter(i=>i.grp===g),sec=document.createElement('section');sec.className='rsec';
@@ -55,8 +55,8 @@ function drawOpts(){const box=$('#dopts');box.innerHTML='';const groups=[...new 
       l.innerHTML=`<input type="checkbox" data-id="${it.id}" ${it.ok?'':'disabled'} ${sel.has(it.id)?'checked':''}><span>${esc(g==='Live foto'&&!it.ok?'Live foto':it.label)}${it.ok?'':`<small>${esc(it.why)}</small>`}</span><em>${it.ext.toUpperCase()}</em>`;f.append(l)});box.append(f)});
   box.querySelectorAll('input').forEach(c=>c.onchange=()=>{const it=items.find(x=>x.id===c.dataset.id);c.checked?sel.add(it.id):sel.delete(it.id);cur=it;dlgPrev();count()})}
 function count(){const n=sel.size;$('#go').disabled=!n||busy;$('#go').textContent=n?`Unduh ${n} file terpilih`:'Pilih dulu yang mau diunduh'}
-function openDlg(it,pre){sel.clear();if(pre)sel.add(it.id);cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';$('#dlg').showModal();dlgPrev()}
-$('#open').onclick=()=>openDlg(null,false);
+function openDlg(it){sel.clear();items.filter(i=>i.ok).forEach(i=>sel.add(i.id));cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';$('#dlg').showModal();dlgPrev()}
+$('#open').onclick=()=>openDlg(null);
 $('#dlg').addEventListener('close',()=>cancelAnimationFrame(dlgLoop));
 $('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()});
 $('#selAll').onclick=()=>{items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count()};
