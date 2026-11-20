@@ -101,5 +101,5 @@ $('#go').onclick=async()=>{const list=items.filter(i=>sel.has(i.id)&&i.ok),ord=[
 loadStrip().then(async s=>{S=s;frame=frameOf(s.st);
   clips=await Promise.all(s.imgs.map(async(_,i)=>{try{const c=await clipGet(i);if(!c||!c.blobs||c.blobs.length<4)return null;
     return{frames:await Promise.all(c.blobs.map(b=>createImageBitmap(b))),key:c.key}}catch{return null}}));
-  $('#fname').textContent=frame.name;build();$('#msg').hidden=true;$('#ui').hidden=false;drawRes();
+  $('#fname').textContent=frame.name;build();{const ORD=['Frame','Animasi','Foto satuan','Live foto'];items.sort((a,b)=>ORD.indexOf(a.grp)-ORD.indexOf(b.grp))}$('#msg').hidden=true;$('#ui').hidden=false;drawRes();
   cards.forEach(c=>io&&io.observe(c.cv));requestAnimationFrame(tick);}).catch(stripError);
