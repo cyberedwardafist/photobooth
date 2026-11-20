@@ -4,7 +4,7 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 
 ## 1. Supabase
 1. Buat project di supabase.com.
-2. Dari terminal: salin `.env.example` ke `.env.local`, isi `DATABASE_URL` (Project Settings, Database, Connection string URI), lalu jalankan `npm install` dan `npm run migrate`. Ini membuat tabel `templates` dan `app_stats`, mengunci RLS, dan mengisi 5 template awal. Aman dijalankan berulang. Alternatif tanpa terminal: tempel isi `supabase/schema.sql` di SQL Editor lalu Run.
+2. Dari terminal: salin `.env.example` ke `.env.local`, isi `DATABASE_URL` (Project Settings, Database, Connection string URI), lalu jalankan `npm install` dan `npm run migrate`. Ini membuat tabel `templates`, `app_stats`, `app_settings` (pengaturan situs), dan `download_log` (statistik unduhan), mengunci RLS, dan mengisi 5 template awal. Jalankan lagi setelah memperbarui kode supaya tabel baru ikut dibuat; sebelum itu panel admin tetap jalan tetapi pengaturan dan statistik belum bisa disimpan. Aman dijalankan berulang. Alternatif tanpa terminal: tempel isi `supabase/schema.sql` di SQL Editor lalu Run.
 3. Project Settings, API: salin **Project URL** dan kunci **service_role**. Kunci ini rahasia, jangan dimasukkan ke file di `public/`.
 
 ## 2. Vercel
@@ -13,8 +13,19 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 3. Isi Environment Variables (lihat `.env.example`): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER`, `ADMIN_PASS`, `SESSION_SECRET` (minimal 32 karakter acak).
 4. Deploy. Halaman admin ada di `/admin.html`.
 
+## Panel admin
+Dasbor satu halaman dengan lima menu (`#ringkasan`, `#template`, `#alur`, `#statistik`, `#sistem`):
+- **Ringkasan**: tombol buka/tutup situs, alur empat langkah pengunjung dengan pengaturannya saat ini, angka unduhan, grafik 14 hari, dan daftar yang perlu perhatian.
+- **Template dan frame**: tambah, ubah, sembunyikan, dan hapus template warna (dengan pratinjau dan cek kontras). Frame bawaan (`frames.js`) bisa disembunyikan dari pengunjung.
+- **Alur dan pengaturan**: mode tutup + pesannya, pengumuman, tata letak yang tersedia, lama hitung mundur, tombol Langsung, unggah foto, live foto, unduhan video, dan Connect. Disimpan sekali lewat bilah "Simpan perubahan".
+- **Statistik**: unduhan per hari (WIB), frame dan tata letak terpopuler, unduhan terbaru. Dicatat di `download_log` setiap kali pengunjung menekan Unduh.
+- **Sistem**: pemeriksaan database dan environment, sisa waktu sesi, pintasan halaman, dan unduh cadangan JSON.
+
+Pengaturan dibaca halaman pengunjung lewat `GET /api/settings` (`public/common.js`). Kalau gagal dimuat, situs memakai pengaturan bawaan. Perlu diingat: mode tutup dan sembunyikan frame dijalankan di sisi peramban, jadi ini pengatur alur, bukan pengaman akses.
+
 ## Uji lokal
 `npm install`, salin `.env.example` ke `.env.local` dan isi, lalu `npx vercel dev`.
+Tanpa Supabase: `ADMIN_PASS=sandi npm start` menjalankan `server.js` (data di `data.json`, termasuk pengaturan dan log unduhan).
 
 ## Catatan
 - Sesi admin berupa cookie bertanda tangan (8 jam), tanpa penyimpanan di server.

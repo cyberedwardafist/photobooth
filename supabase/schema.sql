@@ -41,3 +41,36 @@ select * from (values
   ('Gerbong Teal', '#57A9B4', '#0B2F35')
 ) as v(name, bg, ink)
 where not exists (select 1 from public.templates);
+
+-- ===== Panel admin v2: pengaturan situs + log unduhan (idempoten) =====
+create table if not exists public.app_settings (
+  key text primary key,
+  value jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.download_log (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  frame text check (frame is null or char_length(frame) <= 40),
+  layout text check (layout is null or char_length(layout) <= 8),
+  files int not null default 1 check (files between 0 and 100)
+);
+create index if not exists download_log_at_idx on public.download_log (at desc);
+
+alter table public.app_settings enable row level security;
+alter table public.download_log enable row level security;
+
+create or replace function public.log_download(p_frame text, p_layout text, p_files int)
+returns bigint
+language sql
+security definer
+set search_path = public
+as $$
+  insert into public.download_log (frame, layout, files)
+  values (left(p_frame, 40), left(p_layout, 8), greatest(0, least(coalesce(p_files, 1), 100)));
+  update public.app_stats set value = value + 1 where key = 'downloads' returning value;
+$$;
+
+revoke execute on function public.log_download(text, text, int) from public, anon, authenticated;
+grant execute on function public.log_download(text, text, int) to service_role;

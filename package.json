@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
+    "start": "node server.js",
     "migrate": "node scripts/migrate.js"
   },
   "engines": {

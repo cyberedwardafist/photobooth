@@ -9,7 +9,7 @@ const frameAt=(c,t)=>c.frames[Math.min(c.frames.length-1,Math.floor((t%clipCyc(c
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const photoCv=(cv,s)=>{cv.width=Math.round(640*s/2)*2;cv.height=Math.round(480*s/2)*2;return cv.getContext('2d')};
 
-function build(){const {imgs,adj,lay}=S,n=imgs.length,anyClip=clips.some(Boolean),vid=!!VID,noVid='Peramban ini belum bisa merekam video.';
+function build(){const {imgs,adj,lay}=S,n=imgs.length,anyClip=clips.some(Boolean),vid=!!VID&&CFG.video,noVid=CFG.video?'Peramban ini belum bisa merekam video.':'Unduhan video sedang dimatikan oleh admin.';
   const mk=o=>items.push({ext:'png',tag:'PNG',anim:false,cyc:1,vs:1,ok:true,...o});
   const sz=stripSize(lay,frame),stripS=Math.min(1,300/sz.W),vs=Math.min(1,1100/Math.max(sz.W,sz.H));
   mk({id:'strip',grp:'Frame',label:'Frame diam',file:'frame',sub:'Strip lengkap dengan frame',ps:stripS,w:sz.W,h:sz.H,
@@ -96,9 +96,9 @@ $('#go').onclick=async()=>{const list=items.filter(i=>sel.has(i.id)&&i.ok),ord=[
     try{const b=await blobOf(it,p=>$('#prog').textContent=`Merekam ${lbl} (${Math.round(p*100)}%)`);save(b,`photobooth-${it.file}.${it.ext}`);done++;await wait(500)}catch{fail.push(it.label)}}
   busy=false;document.querySelectorAll('#dlg input:not([data-off]),#selAll,#selNone').forEach(e=>{e.disabled=false});drawOpts();count();
   $('#prog').textContent=fail.length?`${done} file terunduh. Gagal: ${fail.join(', ')}.`:`Selesai, ${done} file terunduh. Cek folder unduhan.`;
-  if(done)fetch('/api/download',{method:'POST'}).catch(()=>{})};
+  if(done)fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({frame:frame.name,layout:S.lay,files:done})}).catch(()=>{})};
 
-loadStrip().then(async s=>{S=s;frame=frameOf(s.st);
+Promise.all([loadStrip(),SETP]).then(async([s])=>{S=s;frame=frameOf(s.st);
   clips=await Promise.all(s.imgs.map(async(_,i)=>{try{const c=await clipGet(i);if(!c||!c.blobs||c.blobs.length<4)return null;
     return{frames:await Promise.all(c.blobs.map(b=>createImageBitmap(b))),key:c.key}}catch{return null}}));
   $('#fname').textContent=frame.name;build();{const ORD=['Frame','Animasi','Foto satuan','Live foto'];items.sort((a,b)=>ORD.indexOf(a.grp)-ORD.indexOf(b.grp))}$('#msg').hidden=true;$('#ui').hidden=false;drawRes();

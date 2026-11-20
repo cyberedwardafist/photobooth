@@ -57,3 +57,28 @@ const pbSync=patch=>{if(PBR)PBR.send({k:'state',patch})},pbEv=(name,data)=>{if(P
 /* tamu tidak bisa pindah langkah; hanya host */
 document.addEventListener('click',e=>{if(!(PBR&&PBR.role==='guest'))return;const a=e.target.closest&&e.target.closest('a[href]');
   if(a){const u=new URL(a.href,location.href);if(u.origin===location.origin&&FLOWP.includes(pageOf(u))){e.preventDefault();e.stopImmediatePropagation()}}},true);
+
+/* Pengaturan situs dari admin (/api/settings). Kalau gagal dimuat, situs jalan dengan pengaturan bawaan. */
+const CFG0={open:true,closedMessage:'',banner:{on:false,text:'',tone:'info'},layouts:Object.keys(LAY),countdown:3,instant:true,upload:true,live:true,video:true,connect:true,hiddenFrames:[]};
+let CFG={...CFG0};
+const FLOWGATE=['foto','adjust','edit','unduh','connect'];
+function applySite(){
+  if(window!==top)return;/* di dalam ruang Connect, induknya sudah menampilkan ini */
+  const pg=pageOf(location),box=(cls,t,sub)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=t;return d};
+  if(!CFG.connect)document.querySelectorAll('a[href="connect.html"]').forEach(a=>a.remove());
+  const closed=!CFG.open&&FLOWGATE.includes(pg),noConn=!CFG.connect&&pg==='connect';
+  if(closed||noConn){
+    const o=box('pbx','<div class="pbx-card" role="alertdialog" aria-labelledby="pbxT"><img src="logo-mark.svg" alt="" width="34" height="50"><h2 id="pbxT"></h2><p></p><a class="btn" href="index.html">Kembali ke beranda</a></div>');
+    o.querySelector('h2').textContent=closed?'Photobooth sedang tutup':'Connect sedang dimatikan';
+    o.querySelector('p').textContent=closed?(CFG.closedMessage||'Coba lagi nanti ya.'):'Fitur foto bareng belum bisa dipakai sekarang. Kamu masih bisa memotret sendiri.';
+    if(noConn)o.querySelector('a').textContent='Kembali ke beranda';
+    document.body.append(o);document.documentElement.classList.add('pbx-on');return}
+  const msg=!CFG.open?CFG.closedMessage:CFG.banner.on&&CFG.banner.text?CFG.banner.text:'';
+  if(msg){const b=box('pbanner '+(!CFG.open?'warn':CFG.banner.tone),'');b.setAttribute('role','status');b.textContent=msg;document.body.prepend(b)}}
+const SETP=(async()=>{
+  if(document.documentElement.hasAttribute('data-admin'))return CFG;
+  try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);
+    const r=await fetch('/api/settings',{signal:c.signal,cache:'no-store'});clearTimeout(t);
+    if(r.ok){const j=await r.json();CFG={...CFG0,...j,banner:{...CFG0.banner,...(j.banner||{})}}}}catch{}
+  if(document.readyState==='loading')await new Promise(r=>document.addEventListener('DOMContentLoaded',r));
+  applySite();return CFG})();

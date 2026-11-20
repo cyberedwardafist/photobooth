@@ -647,3 +647,11 @@ section.how.alt::after{content:"";position:absolute;left:0;right:0;top:-1px;heig
   #dlg .dlist .note{font-size:12.5px;line-height:1.4}
   #dcap{font-size:13.5px}
 }
+
+/* pengumuman dan mode tutup (dari panel admin) */
+.pbanner{padding:10px 5vw;text-align:center;font-weight:700;font-size:15px;background:var(--ink);color:#fff}
+.pbanner.warn{background:var(--pink);color:var(--ink)}
+.pbx{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:var(--sky)}
+.pbx-card{width:min(440px,100%);padding:34px 28px;border:2px solid var(--ink);border-radius:24px;background:#fff;box-shadow:0 8px 0 rgba(30,45,90,.9);text-align:center;display:grid;gap:14px;justify-items:center}
+.pbx-card h2{font-size:30px}
+.pbx-on{overflow:hidden}

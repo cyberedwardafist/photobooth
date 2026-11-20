@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const getDb = require('./db');
+const { sanitize, aggregate, DEFAULTS } = require('./settings');
 
 const sha = v => crypto.createHash('sha256').update(v).digest();
 const same = (a, b) => crypto.timingSafeEqual(sha(String(a)), sha(String(b)));
@@ -29,17 +30,43 @@ function requireAdmin(req, res) {
 const hex = v => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v);
 const uuid = v => typeof v === 'string' && /^[0-9a-f-]{36}$/i.test(v);
 
-async function snapshot() {
+const sessionExpiry = req => {
+  const [p] = String(fromCookie(req)).split('.');
+  const t = Number(Buffer.from(p || '', 'base64url').toString());
+  return Number.isFinite(t) ? t : 0;
+};
+
+// Satu panggilan untuk seluruh dasbor. Tabel baru (pengaturan, log) boleh belum ada: dasbor tetap jalan dan minta migrasi.
+async function snapshot(req) {
   const db = getDb();
-  const [t, s] = await Promise.all([
+  const since = new Date(Date.now() - 31 * 86400e3).toISOString();
+  const [t, s, cfg, log] = await Promise.all([
     db.from('templates').select('*').order('created_at', { ascending: true }),
-    db.from('app_stats').select('value').eq('key', 'downloads').maybeSingle()
+    db.from('app_stats').select('value').eq('key', 'downloads').maybeSingle(),
+    db.from('app_settings').select('value').eq('key', 'site').maybeSingle(),
+    db.from('download_log').select('at,frame,layout,files').gte('at', since).order('at', { ascending: false }).limit(5000)
   ]);
   if (t.error) throw t.error;
   if (s.error) throw s.error;
-  return { downloads: Number((s.data && s.data.value) || 0), templates: t.data };
+  if (cfg.error) console.error('app_settings:', cfg.error.message);
+  if (log.error) console.error('download_log:', log.error.message);
+  const sec = process.env.SESSION_SECRET || '';
+  return {
+    downloads: Number((s.data && s.data.value) || 0),
+    templates: t.data,
+    settings: cfg.error ? { ...DEFAULTS } : sanitize(cfg.data && cfg.data.value),
+    stats: log.error ? null : aggregate(log.data),
+    migrated: { settings: !cfg.error, log: !log.error },
+    session: { expires: req ? sessionExpiry(req) : 0 },
+    env: {
+      supabase: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+      adminPass: !!process.env.ADMIN_PASS,
+      secretLen: sec.length,
+      runtime: process.env.VERCEL ? 'Vercel' : 'Lokal'
+    }
+  };
 }
 
 const fail = (res, e) => { console.error(e); res.status(500).json({ error: 'Gagal terhubung ke database' }); };
 
-module.exports = { same, configured, makeToken, requireAdmin, hex, uuid, snapshot, fail };
+module.exports = { sessionExpiry, same, configured, makeToken, requireAdmin, hex, uuid, snapshot, fail };

@@ -10,6 +10,6 @@ module.exports = async (req, res) => {
   try {
     const { error } = await getDb().from('templates').insert({ name: String(name).trim(), bg, ink });
     if (error) throw error;
-    res.json(await snapshot());
+    res.json(await snapshot(req));
   } catch (e) { fail(res, e); }
 };

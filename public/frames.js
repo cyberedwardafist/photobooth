@@ -13,6 +13,7 @@ const FRAMES=[
  {id:'retro',cat:'Klasik',name:'Kotak Retro',bg:'#FBEBD3',ink:'#6B2D12',pat:'checker',pc:'rgba(240,160,100,.35)',g:36,bw:5,bc:'#6B2D12'},
  {id:'mono',cat:'Klasik',name:'Monokrom',bg:'#FFFFFF',ink:'#000000',g:30,bw:6,bc:'#000000'}
 ];
+const visibleFrames=()=>FRAMES.filter(f=>!CFG.hiddenFrames.includes(f.id));
 const FR0={g:28,r:0,pat:'none',bw:0,sh:0,ink:'#1E2D5A',bg:'#F5E6D5'};
 const frameFull=f=>({...FR0,...f});
 const plainFrame=t=>({id:'tpl-'+t.id,cat:'Warna polos',name:t.name,bg:t.bg,ink:t.ink});
