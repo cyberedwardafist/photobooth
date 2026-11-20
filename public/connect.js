@@ -57,7 +57,7 @@ function onLoad(){const f=$('#app'),w=f.contentWindow;let p;try{p=pageOf(new URL
   const d=w.document;fitFn=()=>{f.style.height=d.body.offsetHeight+'px'};fitH();new w.ResizeObserver(fitH).observe(d.body);
   if(info.role==='host')room.bcast({k:'nav',page:p})}
 function runRoom(resume){if(started)return;started=true;if(resume!==true){try{sessionStorage.removeItem(KEY)}catch{}clipClear().catch(()=>{});page='foto'}csave();
-  Object.assign(PBC,{role:info.role,stream});$('#cwrap').hidden=true;$('#vRun').hidden=false;
+  Object.assign(PBC,{role:info.role,stream,name:info.name});$('#cwrap').hidden=true;$('#vRun').hidden=false;
   fill($('#vc'),room);const f=$('#app');f.addEventListener('load',onLoad);f.src='/'+page}
 async function enter(role,code,name,sv){$('#err').textContent='';if(!await cam())return;
   info={role,code,name,fresh:!sv};
