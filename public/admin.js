@@ -14,17 +14,18 @@ const ic={
   warn:I('<path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.6h.01"/>'),
   bad:I('<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>'),
   ext:I('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
-  plus:I('<path d="M12 5v14M5 12h14"/>'),dl:I('<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>')
+  unggah:I('<path d="M12 16V4M7.5 8.5L12 4l4.5 4.5M5 20h14"/>'),plus:I('<path d="M12 5v14M5 12h14"/>'),dl:I('<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>')
 };
 const layIcon=k=>{const [c,r]=LAY[k],w=18/c,h=18/r;let s='';for(let i=0;i<c*r;i++)s+=`<rect x="${2+(i%c)*w+.6}" y="${2+Math.floor(i/c)*h+.6}" width="${w-1.2}" height="${h-1.2}" rx="1.5" fill="currentColor"/>`;return `<svg viewBox="0 0 22 22" aria-hidden="true">${s}</svg>`};
 
 const ROUTES={
   ringkasan:['Ringkasan','Ringkasan','Kondisi situs dan alur yang dilalui pengunjung.'],
   template:['Template dan frame','Frame','Atur frame yang bisa dipilih pengunjung.'],
+  unggah:['Unggah frame','Unggah','Pasang frame buatan AI lewat berkas JSON.'],
   alur:['Alur dan pengaturan','Alur','Atur apa saja yang bisa dilakukan pengunjung.'],
   statistik:['Statistik','Statistik','Seberapa sering strip diunduh, dan frame apa yang dipakai.'],
   sistem:['Sistem','Sistem','Kesehatan server, sesi admin, dan cadangan data.']};
-let D=null,draft=null,route='ringkasan',tab='warna',q='',range=30,showTbl=false,editing=null,chartDays=[];
+let D=null,draft=null,route='ringkasan',tab='semua',gq='Semua',q='',range=30,showTbl=false,editing=null,chartDays=[];
 const dirty=()=>!!D&&!same(draft,D.settings);
 const view=$('#view');
 
@@ -58,8 +59,8 @@ function chrome(){
 function render(keep){
   let key=null;const a=document.activeElement;
   if(keep&&a&&view.contains(a)){key=a.dataset.set?`[data-set="${a.dataset.set}"]`:a.dataset.fr?`[data-fr="${a.dataset.fr}"]`:a.dataset.act?`[data-act="${a.dataset.act}"]${a.dataset.k?`[data-k="${a.dataset.k}"]`:''}`:null}
-  chrome();view.innerHTML=({ringkasan:vRingkasan,template:vTemplate,alur:vAlur,statistik:vStatistik,sistem:vSistem}[route])();
-  bindChart();paint();
+  chrome();view.innerHTML=({ringkasan:vRingkasan,template:vTemplate,unggah:vUnggah,alur:vAlur,statistik:vStatistik,sistem:vSistem}[route])();
+  bindChart();paint();if(route==='unggah')renderUp();
   if(key){const el=view.querySelector(key);if(el)el.focus({preventScroll:true})}}
 
 /* ===== gambar frame (canvas) ===== */
@@ -103,7 +104,7 @@ function vRingkasan(){const s=D.settings,st=D.stats,on=s.open,att=attention();
   const cells=[
     ['Foto','#alur',[li(`${s.layouts.length} dari ${LAYS.length} tata letak`),li(`Hitung mundur ${s.countdown} detik${s.instant?', atau langsung':''}`),li('Unggah foto',s.upload),li('Live foto (klip 2 detik)',s.live)]],
     ['Atur foto',null,[li('Filter, kecerahan, kontras, saturasi'),li('Berlaku per foto, selalu aktif')]],
-    ['Frame','#template',[li(`${builtinOn(s)} dari ${FRAMES.length} frame bawaan`),li(`${tplActive()} template warna aktif`)]],
+    ['Frame','#template',[li(`${builtinOn(s)} dari ${FRAMES.length} frame bawaan`),li(`${tplActive()} template dan frame kustom aktif`)]],
     ['Unduh',  '#alur',[li('Frame diam dan foto satuan (PNG)'),li('Frame video, animasi, live foto',s.video)]]];
   const strip=cells.map(([t,h,l],i)=>{const inner=`<h3><b>${i+1}</b>${t}</h3><ul>${l.join('')}</ul>`;return h?`<a class="cell" href="${h}" aria-label="${t}: ubah pengaturan">${inner}</a>`:`<div class="cell">${inner}</div>`}).join('');
   return head('Ringkasan',ROUTES.ringkasan[2])+
@@ -114,25 +115,79 @@ function vRingkasan(){const s=D.settings,st=D.stats,on=s.open,att=attention();
   `<section class="card"><div class="ch"><h2>Perlu perhatian</h2></div>${att.length?`<ul class="todo">${att.map(([k,t,x])=>`<li class="${k}">${ic[k]}<div><b>${t}</b><span>${x}</span></div></li>`).join('')}</ul>`:`<ul class="todo"><li class="ok">${ic.ok}<div><b>Semua beres</b><span>Tidak ada yang perlu dikerjakan.</span></div></li></ul>`}</section></div>`}
 
 /* ===== halaman: template dan frame ===== */
-function tplCard(t){const f=plainFrame(t),r=ratio(t.bg,t.ink);
-  return `<article class="fc ${t.active?'':'off'}"><div class="pv"><canvas data-f="tpl-${t.id}" aria-label="Pratinjau ${esc(t.name)}"></canvas></div><h3>${esc(t.name)}</h3>
-  <div class="meta"><span class="dot" style="background:${t.bg}" title="Latar ${t.bg}"></span><span class="dot" style="background:${t.ink}" title="Teks ${t.ink}"></span><span>${t.bg.toUpperCase()}</span>${r<3?'<span class="tag" style="background:#FBE3EE">Teks sulit dibaca</span>':''}</div>
-  <label class="sw"><span>${t.active?'Tampil':'Disembunyikan'}</span><input type="checkbox" role="switch" data-t="${t.id}" ${t.active?'checked':''}><span class="knob" aria-hidden="true"></span></label>
-  <div class="row"><button class="btn alt sm" data-act="t-edit" data-k="${t.id}" type="button">Ubah</button><button class="btn alt sm" data-act="t-del" data-k="${t.id}" type="button">Hapus</button></div></article>`}
-function frCard(f){const off=draft.hiddenFrames.includes(f.id);
-  return `<article class="fc ${off?'off':''}"><div class="pv"><canvas data-f="${f.id}" aria-label="Pratinjau ${esc(f.name)}"></canvas></div><h3>${esc(f.name)}</h3><div class="meta"><span class="tag">${esc(f.cat||'Lainnya')}</span></div>
-  <label class="sw"><span>${off?'Disembunyikan':'Tampil'}</span><input type="checkbox" role="switch" data-fr="${f.id}" ${off?'':'checked'}><span class="knob" aria-hidden="true"></span></label></article>`}
+/* ===== grup: setiap frame (bawaan, warna, kustom) bisa dimasukkan ke grup ===== */
+const KIND={bawaan:'Bawaan',warna:'Warna polos',kustom:'Kustom'};
+const items=()=>[...FRAMES.map(f=>({kind:'bawaan',id:f.id,name:f.name,f})),...D.templates.map(t=>({kind:t.spec?'kustom':'warna',id:'tpl-'+t.id,name:t.name,t}))];
+const defCat=x=>x.kind==='bawaan'?(x.f.cat||'Lainnya'):x.kind==='kustom'?(x.t.spec.cat||'Kustom'):'Warna polos';
+const gOf=x=>draft.groups[x.id]||defCat(x);
+const isOn=x=>x.kind==='bawaan'?!draft.hiddenFrames.includes(x.id):x.t.active;
+function groupMap(){const m=new Map();items().forEach(x=>{const g=gOf(x);m.set(g,(m.get(g)||0)+1)});return m}
+function setGroup(id,name){const x=items().find(i=>i.id===id);if(!x)return;name===defCat(x)?delete draft.groups[id]:draft.groups[id]=name;render(true)}
+const gsel=x=>`<label class="gs"><span>Grup</span><select data-g="${x.id}" aria-label="Grup untuk ${esc(x.name)}">${[...groupMap().keys()].map(n=>`<option value="${esc(n)}" ${n===gOf(x)?'selected':''}>${esc(n)}</option>`).join('')}<option value="__new__">+ Grup baru...</option></select></label>`;
+function card(x){const on=isOn(x),t=x.t;let meta,acts='',sw;
+  if(x.kind==='warna'){const r=ratio(t.bg,t.ink);meta=`<span class="dot" style="background:${t.bg}" title="Latar ${t.bg}"></span><span class="dot" style="background:${t.ink}" title="Teks ${t.ink}"></span><span>${t.bg.toUpperCase()}</span>${r<3?'<span class="tag" style="background:#FBE3EE">Teks sulit dibaca</span>':''}`;
+    acts=`<div class="row"><button class="btn alt sm" data-act="t-edit" data-k="${t.id}" type="button">Ubah</button><button class="btn alt sm" data-act="t-del" data-k="${t.id}" type="button">Hapus</button></div>`}
+  else if(x.kind==='kustom'){meta=`<span class="tag">Kustom</span>${t.spec.pat?`<span class="muted">${esc(t.spec.pat)}</span>`:''}`;
+    acts=`<div class="row"><button class="btn alt sm" data-act="t-json" data-k="${t.id}" type="button">Unduh JSON</button><button class="btn alt sm" data-act="t-del" data-k="${t.id}" type="button">Hapus</button></div>`}
+  else meta=`<span class="tag">Bawaan</span>`;
+  sw=`<label class="sw"><span>${on?'Tampil':'Disembunyikan'}</span><input type="checkbox" role="switch" ${x.kind==='bawaan'?`data-fr="${x.id}"`:`data-t="${t.id}"`} ${on?'checked':''}><span class="knob" aria-hidden="true"></span></label>`;
+  return `<article class="fc ${on?'':'off'}"><div class="pv"><canvas data-f="${x.id}" aria-label="Pratinjau ${esc(x.name)}"></canvas></div><h3>${esc(x.name)}</h3><div class="meta">${meta}</div>${gsel(x)}${sw}${acts}</article>`}
 function gridHtml(){const m=n=>!q||n.toLowerCase().includes(q);
-  if(tab==='warna'){const l=D.templates.filter(t=>m(t.name));
-    return l.length?`<div class="fgrid">${l.map(tplCard).join('')}</div>`:`<div class="empty"><h3>${D.templates.length?'Tidak ada yang cocok':'Belum ada template warna'}</h3><p>${D.templates.length?'Coba kata kunci lain.':'Template warna adalah frame polos satu warna. Tambahkan yang pertama.'}</p>${D.templates.length?'':`<button class="btn" data-act="t-add" type="button">${ic.plus}Tambah template</button>`}</div>`}
-  const l=FRAMES.filter(f=>m(f.name)||m(f.cat||''));
-  return l.length?`<div class="fgrid">${l.map(frCard).join('')}</div>`:`<div class="empty"><h3>Tidak ada yang cocok</h3><p>Coba kata kunci lain.</p></div>`}
-function vTemplate(){const hid=draft.hiddenFrames.length;
+  const l=items().filter(x=>(tab==='semua'||x.kind===tab)&&(gq==='Semua'||gOf(x)===gq)&&(m(x.name)||m(gOf(x))));
+  if(l.length)return `<div class="fgrid">${l.map(card).join('')}</div>`;
+  const none=!items().some(x=>tab==='semua'||x.kind===tab);
+  return `<div class="empty"><h3>${none?'Belum ada frame di jenis ini':'Tidak ada yang cocok'}</h3><p>${none?(tab==='kustom'?'Frame kustom dibuat dengan bantuan AI, lalu diunggah sebagai berkas.':'Tambahkan yang pertama.'):'Coba kata kunci atau grup lain.'}</p>${none&&tab==='kustom'?'<a class="btn" href="#unggah">Unggah frame</a>':''}</div>`}
+function vTemplate(){const gm=groupMap();if(gq!=='Semua'&&!gm.has(gq))gq='Semua';
+  const all=items(),n=k=>all.filter(x=>x.kind===k).length,on=k=>all.filter(x=>x.kind===k&&isOn(x)).length;
+  const seg=[['semua',`Semua (${all.filter(isOn).length}/${all.length})`],['bawaan',`Bawaan (${on('bawaan')}/${n('bawaan')})`],['warna',`Template warna (${n('warna')})`],['kustom',`Kustom (${n('kustom')})`]];
   return head('Template dan frame',ROUTES.template[2])+
-  `<div class="seg" role="group" aria-label="Jenis frame"><button type="button" data-act="tab" data-k="warna" aria-pressed="${tab==='warna'}">Template warna (${D.templates.length})</button><button type="button" data-act="tab" data-k="bawaan" aria-pressed="${tab==='bawaan'}">Frame bawaan (${FRAMES.length-hid}/${FRAMES.length})</button></div>
-  <div class="toolbar"><input type="search" id="q" data-q placeholder="${tab==='warna'?'Cari template':'Cari frame'}" value="${esc(q)}" aria-label="Cari" autocomplete="off">
-  ${tab==='warna'?`<button class="btn" data-act="t-add" type="button">${ic.plus}Tambah template</button>`:`<span class="muted">Frame bawaan tidak bisa diubah. Sembunyikan yang tidak ingin ditawarkan, lalu simpan.</span>${hid?'<button class="btn alt sm" data-act="fr-all" type="button">Tampilkan semua</button>':''}`}</div>
+  `<div class="seg" role="group" aria-label="Jenis frame">${seg.map(([k,t])=>`<button type="button" data-act="tab" data-k="${k}" aria-pressed="${tab===k}">${t}</button>`).join('')}</div>
+  <div class="toolbar"><input type="search" id="q" data-q placeholder="Cari nama frame atau grup" value="${esc(q)}" aria-label="Cari" autocomplete="off">
+    <div class="row"><button class="btn alt" data-act="t-add" type="button">${ic.plus}Tambah warna</button><a class="btn" href="#unggah">${ic.unggah}Unggah frame</a></div></div>
+  <p class="muted gnote">Grup tampil sebagai filter di halaman frame pengunjung. Pindahkan frame lewat pilihan Grup di tiap kartu, lalu klik Simpan.</p>
+  <div class="chips gchips" role="group" aria-label="Grup">${[['Semua',all.length],...gm].map(([k,c])=>`<button type="button" class="chip" data-act="g-pick" data-k="${esc(k)}" aria-pressed="${k===gq}">${esc(k)} <span class="cnt">${c}</span></button>`).join('')}</div>
+  ${gq!=='Semua'?`<div class="gbar"><span>Grup <b>${esc(gq)}</b>: ${gm.get(gq)} frame</span><button class="btn alt sm" data-act="g-ren" type="button">Ubah nama grup</button></div>`:''}
   <div id="grid">${gridHtml()}</div>`}
+
+/* ===== halaman: unggah frame buatan AI ===== */
+const AIPROMPT=`Kamu membantu membuat frame untuk aplikasi photobooth. Frame adalah strip foto dengan latar warna atau gradasi, pola opsional, jarak dan sudut foto, serta bingkai tiap foto.
+Keluarkan HANYA JSON yang valid (tanpa penjelasan dan tanpa tanda kutip balik), berupa array berisi 1 sampai 5 objek frame dengan kunci berikut:
+- name: nama frame, maksimal 30 huruf (wajib)
+- cat: nama grup, maksimal 24 huruf, misalnya "Lucu" atau "Gelap" (opsional)
+- bg: warna latar "#RRGGBB", atau dua warna ["#RRGGBB","#RRGGBB"] untuk gradasi atas ke bawah (wajib)
+- ink: warna teks dan tanggal "#RRGGBB", harus kontras dengan latar (wajib)
+- pat: pola latar, salah satu dari none, dots, stripes, checker, film, hearts, stars
+- pc: warna pola, "#RRGGBB" atau "rgba(255,255,255,.5)"
+- g: jarak antar foto dan tepi, 10 sampai 80 (bawaan 28)
+- r: sudut membulat foto, 0 sampai 40
+- bw: tebal bingkai tiap foto, 0 sampai 12, dan bc: warna bingkainya "#RRGGBB"
+- sh: 1 untuk bayangan foto, 0 tanpa bayangan
+- ob: garis tepi strip, contoh {"w":3,"c":"#DFE3EE"}
+Contoh: [{"name":"Senja","cat":"Pastel","bg":["#FFD9B5","#F4A3C0"],"ink":"#5A1F3D","g":34,"r":22,"bw":4,"bc":"#FFFFFF","sh":1}]
+
+Frame yang saya mau: `;
+let up=null;
+function vUnggah(){return head('Unggah frame',ROUTES.unggah[2])+`<div class="stack upwrap">
+  <section class="card"><div class="ch"><div><h2>1. Minta AI membuat frame</h2><p>Salin perintah ini ke AI mana saja (Claude, ChatGPT, dan lainnya). Tulis frame yang kamu mau di bagian akhir, lalu simpan jawabannya sebagai berkas .json.</p></div><button class="btn alt sm" data-act="copy-prompt" type="button">Salin perintah</button></div><pre class="prompt" tabindex="0">${esc(AIPROMPT)}</pre></section>
+  <section class="card"><div class="ch"><div><h2>2. Unggah berkas</h2><p>Pilih berkas .json dari AI, atau tempel isinya. Frame diperiksa dulu sebelum disimpan.</p></div></div>
+    <label class="drop"><input type="file" id="ffile" accept=".json,application/json,text/plain"><b>Pilih berkas .json</b><span>atau seret ke sini</span></label>
+    <label class="lbl" for="fpaste">Atau tempel isi JSON</label><textarea id="fpaste" rows="4" spellcheck="false" placeholder='[{"name":"Senja","bg":["#FFD9B5","#F4A3C0"],"ink":"#5A1F3D"}]'></textarea>
+    <div class="row"><button class="btn alt" data-act="up-check" type="button">Periksa isi tempelan</button></div></section>
+  <section class="card" id="upout" aria-live="polite"></section></div>`}
+async function renderUp(){const o=$('#upout');if(!o)return;
+  if(!up){o.innerHTML='<h2>3. Pratinjau</h2><p class="muted">Frame yang lolos pemeriksaan tampil di sini.</p>';return}
+  if(up.err){o.innerHTML=`<h2>3. Pratinjau</h2><p class="err" role="alert">${esc(up.err)}</p>`;return}
+  const ok=up.res.filter(r=>r.ok),bad=up.res.filter(r=>r.error);
+  const gl=[...groupMap().keys()];
+  o.innerHTML=`<h2>3. Pratinjau</h2>${bad.length?`<ul class="uperr">${bad.map(r=>`<li>${esc(r.error)}</li>`).join('')}</ul>`:''}
+  ${ok.length?`<div class="fgrid">${ok.map((r,i)=>`<article class="fc"><div class="pv"><canvas data-i="${i}"></canvas></div><h3>${esc(r.ok.name)}</h3><div class="meta"><span class="tag">${esc(r.ok.pat||'polos')}</span></div></article>`).join('')}</div>
+  <div class="upgo"><label class="lbl" for="upg">Grup untuk frame ini</label><input id="upg" list="upgl" maxlength="24" value="${esc(up.group||ok[0].ok.cat||'Kustom')}" autocomplete="off"><datalist id="upgl">${gl.map(g=>`<option value="${esc(g)}">`).join('')}</datalist>
+  <button class="btn" data-act="up-save" type="button">Simpan ${ok.length} frame</button></div>`:'<p class="muted">Belum ada frame yang valid. Perbaiki berkasnya lalu coba lagi.</p>'}`;
+  try{await document.fonts.ready}catch{}SAMP=SAMP||[0,1].map(sample);
+  o.querySelectorAll('canvas[data-i]').forEach(cv=>renderStrip(cv,{lay:'1x2',photos:SAMP,adj:[adjOf(),adjOf()],frame:{id:'u'+cv.dataset.i,...ok[+cv.dataset.i].ok},s:.4}))}
+function upText(text){try{up={res:FrameSpec.parse(text)}}catch(e){up={err:e.message}}renderUp()}
+function upFile(f){if(!f)return;if(f.size>200e3){up={err:'Berkas terlalu besar. Frame hanya butuh teks kecil.'};return renderUp()}const r=new FileReader();r.onload=()=>upText(String(r.result));r.onerror=()=>{up={err:'Berkas tidak bisa dibaca'};renderUp()};r.readAsText(f)}
+function saveFile(name,text){const u=URL.createObjectURL(new Blob([text],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download=name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
 
 /* ===== halaman: alur dan pengaturan ===== */
 function vAlur(){const d=draft,cd=d.countdown;
@@ -193,6 +248,13 @@ view.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');i
   else if(a==='cd-'||a==='cd+'){draft.countdown=Math.min(10,Math.max(1,draft.countdown+(a==='cd+'?1:-1)));render(true)}
   else if(a==='tone'){draft.banner.tone=k;render(true)}
   else if(a==='tab'){tab=k;q='';render()}
+  else if(a==='g-pick'){gq=k;render(true)}
+  else if(a==='g-ren')openG(gq)
+  else if(a==='t-json'){const t=D.templates.find(x=>x.id===k);saveFile((t.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')||'frame')+'.json',JSON.stringify([{...t.spec,name:t.name}],null,2))}
+  else if(a==='copy-prompt'){try{await navigator.clipboard.writeText(AIPROMPT);toast('Perintah disalin')}catch{const p=view.querySelector('.prompt');const r=document.createRange();r.selectNodeContents(p);getSelection().removeAllRanges();getSelection().addRange(r);toast('Tekan Salin pada peramban kamu','bad')}}
+  else if(a==='up-check')upText($('#fpaste').value)
+  else if(a==='up-save'){const ok=up.res.filter(r=>r.ok).map(r=>r.ok),g=$('#upg').value.trim().slice(0,24)||'Kustom';up.group=g;b.disabled=true;
+    try{apply(await api('/api/admin/templates',{method:'POST',body:{frames:ok.map(f=>({...f,cat:g}))}}));up=null;tab='kustom';gq='Semua';q='';location.hash='#template';toast(ok.length+' frame ditambahkan')}catch(x){b.disabled=false;x.status===401?fail(x):toast(x.message,'bad')}}
   else if(a==='range'){range=+k;render(true)}
   else if(a==='tbl'){showTbl=!showTbl;render(true)}
   else if(a==='fr-all'){draft.hiddenFrames=[];render(true)}
@@ -202,15 +264,29 @@ view.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');i
   else if(a==='backup'){const j={dibuat:new Date().toISOString(),totalUnduhan:D.downloads,pengaturan:D.settings,template:D.templates,unduhanHarian:D.stats&&D.stats.days};
     const u=URL.createObjectURL(new Blob([JSON.stringify(j,null,2)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download='photobooth-cadangan-'+j.dibuat.slice(0,10)+'.json';document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);toast('Cadangan diunduh')}});
 view.addEventListener('change',e=>{const t=e.target;
+  if(t.id==='ffile'){upFile(t.files[0]);t.value='';return}
+  if(t.dataset.g!==undefined){if(t.value==='__new__'){t.value=gOf(items().find(i=>i.id===t.dataset.g));openG(null,t.dataset.g)}else setGroup(t.dataset.g,t.value);return}
   if(t.dataset.t!==undefined)tplCall('/api/admin/templates/'+t.dataset.t,{method:'PATCH',body:{active:t.checked}},t.checked?'Template ditampilkan':'Template disembunyikan');
   else if(t.dataset.fr!==undefined){const h=draft.hiddenFrames,i=h.indexOf(t.dataset.fr);t.checked?(i>=0&&h.splice(i,1)):(i<0&&h.push(t.dataset.fr));render(true)}
   else if(t.dataset.set&&t.type==='checkbox'){setPath(draft,t.dataset.set,t.checked);render(true)}});
 view.addEventListener('input',e=>{const t=e.target;
   if(t.dataset.q!==undefined){q=t.value.trim().toLowerCase();$('#grid').innerHTML=gridHtml();paint($('#grid'))}
   else if(t.dataset.set&&t.type!=='checkbox'){setPath(draft,t.dataset.set,t.value);$('#savebar').hidden=!dirty();if(t.dataset.set==='banner.text'){const p=$('#bprev');if(p)p.textContent=t.value||'Pratinjau pengumuman'}}});
-$('#save').onclick=async()=>{const b=$('#save');b.disabled=true;try{apply(await api('/api/admin/settings',{method:'PUT',body:draft}));draft=clone(D.settings);render(true);toast('Pengaturan disimpan')}catch(e){fail(e)}b.disabled=false};
+$('#save').onclick=async()=>{const b=$('#save');b.disabled=true;try{const ids=new Set(items().map(x=>x.id));for(const k of Object.keys(draft.groups))if(!ids.has(k))delete draft.groups[k];apply(await api('/api/admin/settings',{method:'PUT',body:draft}));draft=clone(D.settings);render(true);toast('Pengaturan disimpan')}catch(e){fail(e)}b.disabled=false};
 $('#undo').onclick=()=>{draft=clone(D.settings);render(true)};
 addEventListener('beforeunload',e=>{if(dirty()){e.preventDefault();e.returnValue=''}});
+
+/* ===== dialog grup ===== */
+let gMode=null;
+function openG(old,id){gMode={old,id};$('#gT').textContent=old?'Ubah nama grup':'Grup baru';$('#gsave').textContent=old?'Simpan nama':'Pakai grup ini';$('#gerr').hidden=true;$('#gn').value=old||'';$('#gdlg').showModal();$('#gn').focus()}
+$('#gcancel').onclick=()=>{$('#gdlg').close();render(true)};
+$('#gform').onsubmit=e=>{e.preventDefault();const n=$('#gn').value.trim().slice(0,24),er=$('#gerr');
+  if(!n||n==='__new__'){er.textContent='Nama grup wajib diisi.';er.hidden=false;return}
+  if(gMode.old){items().filter(x=>gOf(x)===gMode.old).forEach(x=>{n===defCat(x)?delete draft.groups[x.id]:draft.groups[x.id]=n});if(gq===gMode.old)gq=n}
+  else{const x=items().find(i=>i.id===gMode.id);n===defCat(x)?delete draft.groups[x.id]:draft.groups[x.id]=n}
+  $('#gdlg').close();render(true)};
+view.addEventListener('dragover',e=>{if(e.target.closest('.drop')){e.preventDefault()}});
+view.addEventListener('drop',e=>{if(e.target.closest('.drop')){e.preventDefault();upFile(e.dataTransfer.files[0])}});
 
 /* ===== dialog template ===== */
 const hexOk=v=>/^#[0-9a-f]{6}$/i.test(v);

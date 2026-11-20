@@ -74,3 +74,6 @@ $$;
 
 revoke execute on function public.log_download(text, text, int) from public, anon, authenticated;
 grant execute on function public.log_download(text, text, int) to service_role;
+
+-- ===== Frame kustom buatan AI (idempoten) =====
+alter table public.templates add column if not exists spec jsonb;

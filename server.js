@@ -1,4 +1,5 @@
 const express = require('express'), crypto = require('crypto'), fs = require('fs'), path = require('path');
+const FrameSpec = require('./public/framespec.js');
 const { sanitize, aggregate, cleanLog, DEFAULTS } = require('./api/_lib/settings');
 const app = express(), DB = path.join(__dirname, 'data.json'), PORT = process.env.PORT || 3000;
 const USER = process.env.ADMIN_USER || 'admin';
@@ -27,7 +28,7 @@ const sessions = new Map(), fails = new Map();
 const cookie = req => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith('pb_admin='))?.slice(9);
 const auth = (req, res, next) => sessions.has(cookie(req)) ? next() : res.status(401).json({ error: 'Belum masuk' });
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '64kb' }));
 
 app.get('/api/templates', (req, res) => res.json(load().templates.filter(t => t.active)));
 app.get('/api/settings', (req, res) => { res.setHeader('Cache-Control', 'no-store'); res.json(load().settings); });
@@ -53,6 +54,11 @@ app.post('/api/admin/logout', (req, res) => { sessions.delete(cookie(req)); res.
 app.get('/api/admin/data', auth, (req, res) => res.json(view(req, load())));
 app.put('/api/admin/settings', auth, (req, res) => { const d = load(); d.settings = sanitize(req.body); save(d); res.json(view(req, d)); });
 app.post('/api/admin/templates', auth, (req, res) => {
+  if (Array.isArray((req.body || {}).frames)) {
+    let list; try { list = FrameSpec.clean(req.body.frames); } catch (e) { return res.status(400).json({ error: e.message }); }
+    const d = load(); list.forEach((spec, i) => d.templates.push({ id: 'f' + Date.now() + i, name: spec.name, bg: Array.isArray(spec.bg) ? spec.bg[0] : spec.bg, ink: spec.ink, active: true, spec }));
+    save(d); return res.json(view(req, d));
+  }
   const { name, bg, ink } = req.body || {};
   if (!name || String(name).length > 30 || !hex(bg) || !hex(ink)) return res.status(400).json({ error: 'Nama (maks 30 huruf) dan dua warna heks wajib diisi' });
   const d = load(); d.templates.push({ id: 't' + Date.now(), name: String(name), bg, ink, active: true }); save(d); res.json(view(req, d));

@@ -59,7 +59,7 @@ document.addEventListener('click',e=>{if(!(PBR&&PBR.role==='guest'))return;const
   if(a){const u=new URL(a.href,location.href);if(u.origin===location.origin&&FLOWP.includes(pageOf(u))){e.preventDefault();e.stopImmediatePropagation()}}},true);
 
 /* Pengaturan situs dari admin (/api/settings). Kalau gagal dimuat, situs jalan dengan pengaturan bawaan. */
-const CFG0={open:true,closedMessage:'',banner:{on:false,text:'',tone:'info'},layouts:Object.keys(LAY),countdown:3,instant:true,upload:true,live:true,video:true,connect:true,hiddenFrames:[]};
+const CFG0={open:true,closedMessage:'',banner:{on:false,text:'',tone:'info'},layouts:Object.keys(LAY),countdown:3,instant:true,upload:true,live:true,video:true,connect:true,hiddenFrames:[],groups:{}};
 let CFG={...CFG0};
 const FLOWGATE=['foto','adjust','edit','unduh','connect'];
 function applySite(){

@@ -60,3 +60,10 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 - Foto: host yang mengatur (tata letak, ambil foto, ulang, kosongkan, latar). Foto hasil host dikirim ke tamu. Kamera semua peserta digabung dalam satu frame (orang dipotong dengan MediaPipe selfie segmenter, dari CDN). Tamu tidak punya live foto (klip video hanya direkam di perangkat host).
 - Atur foto dan Frame: host dan tamu sama-sama bisa mengubah, perubahan muncul di kedua sisi. Hanya host yang bisa lanjut/kembali, tamu otomatis ikut pindah halaman. Di dua langkah ini kamera semua peserta tampil berdampingan di atas halaman.
 - Unduh: sendiri-sendiri.
+
+
+## Grup frame dan frame buatan AI
+
+- **Grup**: di admin > Frame, tiap kartu punya pilihan Grup (frame bawaan, template warna, dan frame kustom semuanya bisa). Grup jadi filter di halaman frame pengunjung. "Ubah nama grup" memindahkan semua anggotanya sekaligus. Perubahan disimpan lewat tombol Simpan (disimpan di pengaturan situs, kunci `groups`).
+- **Unggah frame**: admin > Unggah. Salin perintah untuk AI, minta frame yang kamu mau, simpan jawabannya sebagai `.json`, lalu unggah. Format dan batasnya ada di `public/framespec.js` (satu sumber untuk peramban dan server; server memeriksa ulang). Frame kustom disimpan di tabel `templates` kolom `spec`.
+- **Migrasi**: jalankan `npm run migrate` sekali agar kolom `spec` ada (idempoten). Mode lokal (`data.json`) tidak perlu migrasi.

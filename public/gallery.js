@@ -20,7 +20,7 @@ function Gallery(o){
     document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{cat=b.dataset.c;document.querySelectorAll('[data-c]').forEach(x=>x.setAttribute('aria-pressed',x===b));apply()})}
   function add(frames){const g=$('#fgrid');frames.forEach(f=>{if(!cards.has(f.id))g.append(card(f))});mark();drawCats();apply()}
   async function loadTpls(){$('#tplNote').hidden=true;
-    try{const l=await fetchTpls(),names=new Set(FRAMES.map(f=>f.name.toLowerCase()));add(l.filter(t=>!names.has(String(t.name).toLowerCase())).map(plainFrame))}catch{$('#tplNote').hidden=false}}
+    try{const l=await fetchTpls(),names=new Set(FRAMES.map(f=>f.name.toLowerCase()));add(l.filter(t=>t.spec||!names.has(String(t.name).toLowerCase())).map(plainFrame))}catch{$('#tplNote').hidden=false}}
   $('#again').onclick=loadTpls;
   $('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();apply()};
   $('#cats').addEventListener('wheel',e=>{const r=e.currentTarget;if(r.scrollWidth>r.clientWidth&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();r.scrollLeft+=e.deltaY}},{passive:false});

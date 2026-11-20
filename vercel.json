@@ -19,5 +19,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/admin/templates/index.js": {
+      "includeFiles": "public/framespec.js"
+    }
+  }
 }

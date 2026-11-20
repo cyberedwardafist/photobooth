@@ -12,7 +12,8 @@ const DEFAULTS = Object.freeze({
   live: true,
   video: true,
   connect: true,
-  hiddenFrames: []
+  hiddenFrames: [],
+  groups: {}
 });
 
 const str = (v, max, fb) => (typeof v === 'string' ? v.trim().slice(0, max) : fb);
@@ -27,6 +28,13 @@ function sanitize(input, base = DEFAULTS) {
   const hidden = Array.isArray(i.hiddenFrames)
     ? [...new Set(i.hiddenFrames.filter(x => typeof x === 'string' && /^[a-z0-9_-]{1,40}$/i.test(x)))].slice(0, 200)
     : base.hiddenFrames;
+  const groups = {};
+  if (i.groups && typeof i.groups === 'object' && !Array.isArray(i.groups)) {
+    for (const [k, v] of Object.entries(i.groups).slice(0, 300)) {
+      const n = typeof v === 'string' ? v.trim().slice(0, 24) : '';
+      if (/^[a-z0-9_-]{1,60}$/i.test(k) && n && n !== '__new__') groups[k] = n;
+    }
+  } else if (i.groups === undefined) Object.assign(groups, base.groups);
   return {
     open: bool(i.open, base.open),
     closedMessage: str(i.closedMessage, 200, base.closedMessage) || DEFAULTS.closedMessage,
@@ -42,7 +50,8 @@ function sanitize(input, base = DEFAULTS) {
     live: bool(i.live, base.live),
     video: bool(i.video, base.video),
     connect: bool(i.connect, base.connect),
-    hiddenFrames: hidden
+    hiddenFrames: hidden,
+    groups
   };
 }
 

@@ -79,6 +79,10 @@
       <div class="dfoot"><button class="btn alt" type="button" id="tcancel">Batal</button><button class="btn" type="submit" id="tsave">Simpan template</button></div>
     </form>
   </dialog>
+  <dialog id="gdlg" aria-labelledby="gT">
+    <form id="gform" method="dialog"><h2 id="gT"></h2><label class="lbl" for="gn">Nama grup (maks 24 huruf)</label><input id="gn" maxlength="24" autocomplete="off"><p class="err" id="gerr" role="alert" hidden></p>
+      <div class="dfoot"><button class="btn alt" type="button" id="gcancel">Batal</button><button class="btn" id="gsave"></button></div></form>
+  </dialog>
   <dialog id="cdlg" aria-labelledby="cT">
     <form method="dialog"><h2 id="cT"></h2><p id="cP"></p><div class="dfoot"><button class="btn alt" value="no">Batal</button><button class="btn danger" value="yes" id="cOk"></button></div></form>
   </dialog>
@@ -86,6 +90,7 @@
 
   <script src="common.js"></script>
   <script src="frames.js"></script>
+  <script src="framespec.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>

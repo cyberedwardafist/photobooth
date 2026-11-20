@@ -13,10 +13,12 @@ const FRAMES=[
  {id:'retro',cat:'Klasik',name:'Kotak Retro',bg:'#FBEBD3',ink:'#6B2D12',pat:'checker',pc:'rgba(240,160,100,.35)',g:36,bw:5,bc:'#6B2D12'},
  {id:'mono',cat:'Klasik',name:'Monokrom',bg:'#FFFFFF',ink:'#000000',g:30,bw:6,bc:'#000000'}
 ];
-const visibleFrames=()=>FRAMES.filter(f=>!CFG.hiddenFrames.includes(f.id));
+/* grup yang diatur admin (CFG.groups) menimpa kategori bawaan */
+const withGroup=(f,d)=>({...f,cat:(CFG.groups&&CFG.groups[f.id])||f.cat||d});
+const visibleFrames=()=>FRAMES.filter(f=>!CFG.hiddenFrames.includes(f.id)).map(f=>withGroup(f));
 const FR0={g:28,r:0,pat:'none',bw:0,sh:0,ink:'#1E2D5A',bg:'#F5E6D5'};
 const frameFull=f=>({...FR0,...f});
-const plainFrame=t=>({id:'tpl-'+t.id,cat:'Warna polos',name:t.name,bg:t.bg,ink:t.ink});
+const plainFrame=t=>{const id='tpl-'+t.id;return withGroup(t.spec?{...t.spec,id,name:t.name,cat:t.spec.cat||'Kustom'}:{id,cat:'Warna polos',name:t.name,bg:t.bg,ink:t.ink},'Lainnya')};
 const frameOf=st=>frameFull(st.frame||(st.bg?{id:'old',name:'Warna',bg:st.bg,ink:st.ink||inkFor(st.bg)}:FRAMES[0]));
 const stripSize=(lay,f)=>{const [c,r]=LAY[lay],g=frameFull(f).g;return{W:c*360+(c+1)*g,H:r*270+(r+1)*g+110}};
 function rr(x,a,b,w,h,r){r=Math.min(r,w/2,h/2);x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
