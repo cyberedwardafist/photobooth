@@ -97,7 +97,7 @@ function cutout(id,v,mirror){let c=cuts.get(id);if(!c){c={cv:document.createElem
     const score=a=>{let cen=0,cn=0,cor=0,kn=0;for(let y=0;y<h;y+=8)for(let x=0;x<w;x+=8){const p=a[y*w+x],fx=x/w,fy=y/h;
       if(fx>.35&&fx<.65&&fy>.5&&fy<.95){cen+=p;cn++}else if(fy<.25&&(fx<.15||fx>.85)){cor+=p;kn++}}return(cn?cen/cn:0)-(kn?cor/kn:0)};
     let best=0,bs=-9;arrs.forEach((a,i)=>{const s=score(a);if(s>bs){bs=s;best=i}});const a=arrs[best];
-    let inv=false;if(arrs.length===1){if(personHi===null){vscore+=bs;if(++votes>=8)personHi=vscore>0}inv=!(personHi===null?bs>0:personHi)}
+    let inv=false;if(arrs.length===1){/* orientasi mask: hanya dihitung dari bukti kuat (ada orang di tengah), dan bisa dikoreksi lagi; kamera kosong tidak boleh membalik mask */if(Math.abs(bs)>.25){vscore=vscore*.97+bs;if(Math.abs(vscore)>.8)personHi=vscore>0}inv=!(personHi===null?bs>0:personHi)}
     let on=0,tot=0;for(let q=0;q<w*h;q+=37){tot++;if((inv?1-a[q]:a[q])>.5)on++}
     if(on/tot<.02||on/tot>.98)return;/* mask tidak valid: jangan tampilkan seluruh frame */
     if(mc.width!==w||mc.height!==h){mc.width=w;mc.height=h}
