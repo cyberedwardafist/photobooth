@@ -15,9 +15,10 @@ async function cam(){if(stream)return stream;const v={facingMode:'user',width:{i
   try{stream=await md.getUserMedia({video:v,audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});micOk=stream.getAudioTracks().length>0}
   catch{try{stream=await md.getUserMedia({video:v,audio:false});micOk=false}catch{stream=null;$('#err').textContent='Kamera tidak bisa dipakai. Izinkan akses kamera di peramban.'}}
   return stream}
-function micBtn(){const b=$('#mic');if(!micOk){b.disabled=true;b.textContent='Mic tidak tersedia';b.title='Izinkan mikrofon di peramban, lalu muat ulang halaman';b.setAttribute('aria-pressed','false');return}
-  const on=stream.getAudioTracks().some(t=>t.enabled);b.setAttribute('aria-pressed',on);b.textContent=on?'Mic aktif':'Mic mati'}
-function spkBtn(){const b=$('#spk');b.setAttribute('aria-pressed',spkOn&&!blocked);b.textContent=blocked?'Ketuk untuk suara':spkOn?'Suara teman nyala':'Suara teman mati'}
+const lbl=(b,t)=>{b.title=t;b.setAttribute('aria-label',t)};
+function micBtn(){const b=$('#mic');if(!micOk){b.disabled=true;lbl(b,'Mic tidak tersedia. Izinkan mikrofon di peramban, lalu muat ulang halaman');b.setAttribute('aria-pressed','false');return}
+  const on=stream.getAudioTracks().some(t=>t.enabled);b.setAttribute('aria-pressed',on);lbl(b,on?'Mic aktif':'Mic mati')}
+function spkBtn(){const b=$('#spk');b.setAttribute('aria-pressed',spkOn&&!blocked);lbl(b,blocked?'Ketuk untuk menyalakan suara':spkOn?'Suara teman nyala':'Suara teman mati')}
 /* suara teman diputar dari halaman induk ini, jadi tidak putus saat pindah langkah di dalam iframe */
 const auds=new Map();
 function syncAudio(){const box=$('#aud'),live=new Set();let bl=false;
