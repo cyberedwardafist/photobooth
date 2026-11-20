@@ -9,33 +9,51 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="in"><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html">Home</a><a href="template.html">Template</a><a href="connect.html" aria-current="page">Connect</a></div></nav>
-<section class="cwrap">
-  <div id="vJoin">
-    <div class="head"><h2>Foto bareng, walau beda tempat</h2><p>Buat ruang atau gabung dengan kode 6 digit. Semua kamera akan menyatu dalam satu frame.</p></div>
-    <div class="cgrid">
-      <div class="panel"><h3>Buat ruang</h3><p class="note">Kamu mendapat kode 6 digit untuk dibagikan ke teman.</p>
-        <label class="fld">Namamu<input id="nameA" maxlength="20" placeholder="Contoh: Dina" autocomplete="nickname"></label>
-        <button class="btn big" id="mk">Buat ruang</button></div>
-      <div class="panel"><h3>Gabung ruang</h3><p class="note">Masukkan kode dari yang membuat ruang.</p>
-        <label class="fld">Namamu<input id="nameB" maxlength="20" placeholder="Contoh: Raka" autocomplete="nickname"></label>
-        <label class="fld">Kode ruang<input id="code" class="codein" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off"></label>
-        <button class="btn alt big" id="jn">Gabung ruang</button></div>
+<header class="hero chero" id="hero">
+  <nav><a class="logo" href="index.html"><img src="logo-mark.svg" alt="" width="28" height="42"><span>photobooth</span></a><div><a href="index.html">Home</a><a href="template.html">Template</a><a href="connect.html" aria-current="page">Connect</a></div></nav>
+  <div class="chero-in" id="heroJoin">
+    <div class="hero-txt">
+      <h1>Foto bareng, walau beda tempat</h1>
+      <p class="lead">Buat ruang atau gabung dengan kode 6 digit. Semua kamera menyatu dalam satu frame.</p>
+      <ul class="facts" aria-label="Langkah"><li><b>1</b> Buat ruang</li><li><b>2</b> Bagikan kode</li><li><b>3</b> Foto bareng</li></ul>
     </div>
-    <p class="note center" id="err" role="alert"></p>
+    <div class="hero-art">
+      <svg class="spk s1" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg><svg class="spk s2" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg><svg class="spk s3" viewBox="-16 -16 32 32" aria-hidden="true"><path d="M0 -15 Q2 -2 15 0 Q2 2 0 15 Q-2 2 -15 0 Q-2 -2 0 -15Z"/></svg>
+      <img src="logo.svg" alt="" width="480" height="480">
+    </div>
   </div>
-  <div id="vRoom" hidden>
-    <div class="head"><h2>Ruang <span class="codebig" id="rc"></span></h2><p id="rsub">Bagikan kode ini. Kamera teman akan muncul di bawah.</p></div>
-    <div class="tiles" id="tiles"></div>
-    <div class="row crow"><button class="btn big-cta" id="go" hidden>Mulai ambil foto</button><button class="btn alt" id="lv">Keluar ruang</button></div>
-    <p class="note center" id="wt" hidden>Menunggu pembuat ruang memulai...</p>
+  <div class="ticket" id="ticket" hidden>
+    <div class="tk-code"><small>Kode ruang</small><b id="rc"></b></div>
+    <ul class="chips" id="chips" aria-label="Peserta"></ul>
+    <div class="tk-act"><button class="btn alt" id="copy">Salin kode</button><button class="btn alt" id="lv">Keluar ruang</button></div>
   </div>
-</section>
-<section id="vRun" hidden>
-  <div class="runbar"><span>Ruang <b class="codebig" id="rb"></b></span><span id="rn"></span><button class="btn alt" id="lv2">Keluar ruang</button></div>
-  <div class="vc" id="vc" hidden aria-label="Kamera semua peserta"></div>
-  <iframe id="app" title="Photobooth bersama" allow="camera"></iframe>
-</section>
+  <svg class="cwave" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22Q100 0 200 22T400 22T600 22T800 22T1000 22T1200 22V40H0Z" fill="#F5E6D5"/></svg>
+</header>
+<main>
+  <section class="cwrap" id="cwrap">
+    <div id="vJoin">
+      <div class="cgrid">
+        <div class="ccard"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><h3>Buat ruang</h3><p>Kamu mendapat kode 6 digit untuk dibagikan ke teman.</p>
+          <label class="fld">Namamu<input id="nameA" maxlength="20" placeholder="Contoh: Dina" autocomplete="nickname"></label>
+          <button class="btn big-cta" id="mk">Buat ruang</button></div>
+        <div class="ccard"><span class="ico"><svg viewBox="0 0 24 24"><path d="M15 4h5v16h-5M10 8l-4 4 4 4M6 12h10"/></svg></span><h3>Gabung ruang</h3><p>Masukkan kode dari yang membuat ruang.</p>
+          <label class="fld">Namamu<input id="nameB" maxlength="20" placeholder="Contoh: Raka" autocomplete="nickname"></label>
+          <label class="fld">Kode ruang<input id="code" class="codein" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off"></label>
+          <button class="btn alt big-cta" id="jn">Gabung ruang</button></div>
+      </div>
+      <p id="err" role="alert"></p>
+    </div>
+    <div id="vRoom" hidden>
+      <div class="head center"><h2>Ruang siap</h2><p id="rsub"></p></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="crow"><button class="btn big-cta" id="go" hidden>Mulai ambil foto</button></div>
+    </div>
+  </section>
+  <section id="vRun" hidden>
+    <div class="vcbox"><div class="vc" id="vc" hidden aria-label="Kamera semua peserta"></div></div>
+    <iframe id="app" title="Photobooth bersama" allow="camera"></iframe>
+  </section>
+</main>
 <footer><span>photobooth</span><a href="admin.html">Masuk admin</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="common.js"></script>
