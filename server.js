@@ -28,6 +28,9 @@ const sessions = new Map(), fails = new Map();
 const cookie = req => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith('pb_admin='))?.slice(9);
 const auth = (req, res, next) => sessions.has(cookie(req)) ? next() : res.status(401).json({ error: 'Belum masuk' });
 
+// Satu alamat utama: host lain (mis. tanpa www) dialihkan ke CANONICAL_HOST, path ikut terbawa.
+const CANON = process.env.CANONICAL_HOST;
+if (CANON) app.use((req, res, next) => req.hostname === CANON ? next() : res.redirect(301, 'https://' + CANON + req.originalUrl));
 app.use(express.json({ limit: '64kb' }));
 
 app.get('/api/templates', (req, res) => res.json(load().templates.filter(t => t.active)));

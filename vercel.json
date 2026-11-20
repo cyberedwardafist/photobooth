@@ -24,5 +24,29 @@
     "api/admin/templates/index.js": {
       "includeFiles": "public/framespec.js"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "waktubersama.my.id"
+        }
+      ],
+      "destination": "https://www.waktubersama.my.id/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://www.waktubersama.my.id/$1",
+      "permanent": true
+    }
+  ]
 }
