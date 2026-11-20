@@ -62,7 +62,7 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 - Atur foto: seperti Google Docs. Foto yang sedang dibuka itu milik masing-masing orang (host di foto 1, tamu di foto 4 boleh berbeda), hasil edit dipakai bersama dan muncul di semua layar. Huruf kecil di pojok thumbnail menunjukkan siapa sedang membuka foto itu.
 - Frame: semua bisa memilih frame, kategori, dan pencarian, muncul di semua sisi. Kamera semua peserta tampil berdampingan di atas halaman.
 - Pindah langkah (foto, atur foto, frame, unduh): siapa pun bisa menekan tautan langkah, semua ikut pindah. Tombol Mulai di ruang tunggu juga bisa ditekan siapa pun.
-- Gulir halaman: siapa pun yang menggulir, layar lain mengikuti (proporsional), di semua langkah (`connect.js`).
+- Gulir halaman: tidak disinkronkan, tiap orang menggulir sendiri.
 - Unduh: penampil besar (buka, geser, tutup) ikut sinkron. Dialog "Pilih yang mau diunduh" (buka, centang, pilih semua/kosongkan) dan tombol Unduh sengaja per perangkat: tiap orang memilih dan menyimpan sendiri. Item video/live hanya ada di perangkat host (klip tidak dikirim), jadi tamu tidak melihatnya.
 
 ## Grup frame dan frame buatan AI

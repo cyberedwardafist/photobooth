@@ -47,11 +47,7 @@ function onApp(d){if(d.k==='big'){const b=bufs.get(d.id)||{n:d.n,p:[],c:0};b.p[d
   else if(d.k==='ev')h.ev&&h.ev(d.name,d.data);
   else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}
   else if(d.k==='navreq'&&info.role==='host'&&started&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}
-  else if(d.k==='startreq'&&info.role==='host'&&!started){room.started=true;room.start();runRoom()}
-  else if(d.k==='scroll'&&started){smute=performance.now()+700;scrollTo({top:d.r*Math.max(0,document.documentElement.scrollHeight-innerHeight),behavior:'instant'})}}
-/* gulir: siapa pun yang menggulir, layar yang lain mengikuti (berlaku di semua langkah). smute mencegah gema balik. */
-let smute=0,stm=0;
-addEventListener('scroll',()=>{if(!started||stm||performance.now()<smute)return;stm=setTimeout(()=>{stm=0;if(performance.now()<smute)return;PBC.send({k:'scroll',r:scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)})},120)},{passive:true});
+  else if(d.k==='startreq'&&info.role==='host'&&!started){room.started=true;room.start();runRoom()}}
 let fitFn=null;const fitH=()=>{const f=$('#app');if(!fitFn)return;if(innerWidth<=820)f.style.height=Math.max(innerHeight-70,520)+'px';else fitFn()};addEventListener('resize',fitH);
 function onLoad(){const f=$('#app'),w=f.contentWindow;let p;try{p=pageOf(new URL(w.location.href))}catch{return}
   page=p;csave();$('#vc').hidden=!['adjust','edit'].includes(p);if(!$('#vc').hidden)$('#vc').querySelectorAll('video').forEach(v=>v.play().catch(()=>{}));w.addEventListener('pagehide',()=>{PBC.hook={}});
