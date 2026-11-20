@@ -13,7 +13,8 @@ const DEFAULTS = Object.freeze({
   video: true,
   connect: true,
   hiddenFrames: [],
-  groups: {}
+  groups: {},
+  footerText: 'A Member of CIBN'
 });
 
 const str = (v, max, fb) => (typeof v === 'string' ? v.trim().slice(0, max) : fb);
@@ -51,7 +52,8 @@ function sanitize(input, base = DEFAULTS) {
     video: bool(i.video, base.video),
     connect: bool(i.connect, base.connect),
     hiddenFrames: hidden,
-    groups
+    groups,
+    footerText: str(i.footerText, 60, base.footerText)
   };
 }
 
