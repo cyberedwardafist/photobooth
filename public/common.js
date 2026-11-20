@@ -54,9 +54,9 @@ const PBR=(()=>{try{return window.parent!==window&&window.parent.PBC||null}catch
 if(window.parent!==window)document.documentElement.classList.add('inframe');
 if(PBR&&PBR.role==='guest')document.documentElement.classList.add('guest');
 const pbSync=patch=>{if(PBR)PBR.send({k:'state',patch})},pbEv=(name,data)=>{if(PBR)PBR.send({k:'ev',name,data})};
-/* tamu tidak bisa pindah langkah; hanya host */
+/* tamu pindah langkah: dikirim ke host, host pindah lalu semua ikut (navreq) */
 document.addEventListener('click',e=>{if(!(PBR&&PBR.role==='guest'))return;const a=e.target.closest&&e.target.closest('a[href]');
-  if(a){const u=new URL(a.href,location.href);if(u.origin===location.origin&&FLOWP.includes(pageOf(u))){e.preventDefault();e.stopImmediatePropagation()}}},true);
+  if(a){const u=new URL(a.href,location.href);if(u.origin===location.origin&&FLOWP.includes(pageOf(u))){e.preventDefault();e.stopImmediatePropagation();if(a.getAttribute('aria-disabled')!=='true')PBR.send({k:'navreq',page:pageOf(u)})}}},true);
 
 /* Pengaturan situs dari admin (/api/settings). Kalau gagal dimuat, situs jalan dengan pengaturan bawaan. */
 const CFG0={open:true,closedMessage:'',banner:{on:false,text:'',tone:'info'},layouts:Object.keys(LAY),countdown:3,instant:true,upload:true,live:true,video:true,connect:true,hiddenFrames:[],groups:{},footerText:'A Member of CIBN'};

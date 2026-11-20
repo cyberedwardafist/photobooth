@@ -6,6 +6,7 @@ const VID=(()=>{if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureSt
 const FMS=1000/LIVE.FPS,HOLD=500,SLIDE=900;
 const clipCyc=c=>c.frames.length*FMS+HOLD;
 const frameAt=(c,t)=>c.frames[Math.min(c.frames.length-1,Math.floor((t%clipCyc(c))/FMS))];
+let rmU=false,lbxRem=false,dlgRem=false;const U=(n,d)=>{if(PBR&&!rmU)pbEv(n,d)};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const photoCv=(cv,s)=>{cv.width=Math.round(640*s/2)*2;cv.height=Math.round(480*s/2)*2;return cv.getContext('2d')};
 
@@ -47,13 +48,13 @@ function tick(ts){if(ts-lastT>=1000/12){lastT=ts;if(!$('#dlg').open&&!$('#lbx').
 /* penampil besar: klik kartu, geser atau panah untuk pindah */
 let vi=0,vloop=0,vdir=0;const vlist=()=>items.filter(i=>i.ok);
 function showV(k,dir){const L=vlist();vi=(k+L.length)%L.length;const it=L[vi],cv=$('#lcv'),s=Math.min(1,1000/Math.max(it.w,it.h));
-  cancelAnimationFrame(vloop);$('#lT').textContent=it.label;$('#lS').textContent=it.sub;$('#lN').textContent=`${vi+1} / ${L.length}`;
+  U('vshow',it.id);cancelAnimationFrame(vloop);$('#lT').textContent=it.label;$('#lS').textContent=it.sub;$('#lN').textContent=`${vi+1} / ${L.length}`;
   $('#lPrev').hidden=$('#lNext').hidden=L.length<2;
   if(dir&&!reduce){cv.classList.remove('inL','inR');void cv.offsetWidth;cv.classList.add(dir>0?'inR':'inL')}
   const t0=performance.now(),run=()=>{it.paint(cv,performance.now()-t0,s);if(it.anim)vloop=requestAnimationFrame(run)};run()}
-function openView(it){showV(vlist().indexOf(it),0);$('#lbx').showModal()}
+function openView(it){showV(vlist().indexOf(it),0);if(!$('#lbx').open)$('#lbx').showModal()}
 $('#lPrev').onclick=()=>showV(vi-1,-1);$('#lNext').onclick=()=>showV(vi+1,1);$('#lX').onclick=()=>$('#lbx').close();
-$('#lbx').addEventListener('close',()=>cancelAnimationFrame(vloop));
+$('#lbx').addEventListener('close',()=>{cancelAnimationFrame(vloop);if(lbxRem){lbxRem=false;return}U('vclose')});
 $('#lbx').addEventListener('click',e=>{if(e.target===$('#lbx'))$('#lbx').close()});
 $('#lbx').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();showV(vi-1,-1)}else if(e.key==='ArrowRight'){e.preventDefault();showV(vi+1,1)}});
 {let sx=null;const st=$('#lStage');st.addEventListener('pointerdown',e=>{if(!e.target.closest('.lnav'))sx=e.clientX});
@@ -69,14 +70,14 @@ function drawOpts(){const box=$('#dopts');box.innerHTML='';const groups=[...new 
     const f=document.createElement('fieldset');f.innerHTML=`<legend>${g}</legend>`;
     list.forEach(it=>{const l=document.createElement('label');l.className='opt'+(it.ok?'':' off');
       l.innerHTML=`<input type="checkbox" data-id="${it.id}" ${it.ok?'':'disabled'} ${sel.has(it.id)?'checked':''}><span>${esc(g==='Live foto'&&!it.ok?'Live foto':it.label)}${it.ok?'':`<small>${esc(it.why)}</small>`}</span><em>${it.ext.toUpperCase()}</em>`;f.append(l)});box.append(f)});
-  box.querySelectorAll('input').forEach(c=>c.onchange=()=>{const it=items.find(x=>x.id===c.dataset.id);c.checked?sel.add(it.id):sel.delete(it.id);cur=it;dlgPrev();count()})}
+  box.querySelectorAll('input').forEach(c=>c.onchange=()=>{const it=items.find(x=>x.id===c.dataset.id);c.checked?sel.add(it.id):sel.delete(it.id);cur=it;dlgPrev();count();U('dsel',{id:it.id,on:c.checked})})}
 function count(){const n=sel.size;$('#go').disabled=!n||busy;$('#go').textContent=n?`Unduh ${n} file terpilih`:'Pilih dulu yang mau diunduh'}
-function openDlg(it){sel.clear();items.filter(i=>i.ok).forEach(i=>sel.add(i.id));cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';$('#dlg').showModal();dlgPrev()}
+function openDlg(it){sel.clear();items.filter(i=>i.ok).forEach(i=>sel.add(i.id));cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';if(!$('#dlg').open)$('#dlg').showModal();dlgPrev();U('dopen')}
 $('#open').onclick=()=>openDlg(null);
-$('#dlg').addEventListener('close',()=>cancelAnimationFrame(dlgLoop));
+$('#dlg').addEventListener('close',()=>{cancelAnimationFrame(dlgLoop);if(dlgRem){dlgRem=false;return}U('dclose')});
 $('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()});
-$('#selAll').onclick=()=>{items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count()};
-$('#selNone').onclick=()=>{sel.clear();drawOpts();count()};
+$('#selAll').onclick=()=>{items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count();U('dall')};
+$('#selNone').onclick=()=>{sel.clear();drawOpts();count();U('dnone')};
 
 /* pembuatan file */
 function record(it,onp){return new Promise((ok,no)=>{const cv=document.createElement('canvas'),loops=Math.max(1,Math.ceil(4000/it.cyc)),total=it.cyc*loops;
@@ -102,4 +103,13 @@ Promise.all([loadStrip(),SETP]).then(async([s])=>{S=s;frame=frameOf(s.st);
   clips=await Promise.all(s.imgs.map(async(_,i)=>{try{const c=await clipGet(i);if(!c||!c.blobs||c.blobs.length<4)return null;
     return{frames:await Promise.all(c.blobs.map(b=>createImageBitmap(b))),key:c.key}}catch{return null}}));
   $('#fname').textContent=frame.name;build();{const ORD=['Frame','Animasi','Foto satuan','Live foto'];items.sort((a,b)=>ORD.indexOf(a.grp)-ORD.indexOf(b.grp))}$('#msg').hidden=true;$('#ui').hidden=false;drawRes();
-  cards.forEach(c=>io&&io.observe(c.cv));requestAnimationFrame(tick);}).catch(stripError);
+  cards.forEach(c=>io&&io.observe(c.cv));requestAnimationFrame(tick);
+  if(PBR)PBR.hook={ev:(n,d)=>{rmU=true;try{
+    if(n==='vshow'){const it=items.find(x=>x.id===d);if(it&&it.ok){if(!$('#lbx').open)$('#lbx').showModal();showV(vlist().indexOf(it),0)}}
+    else if(n==='vclose'){if($('#lbx').open){lbxRem=true;$('#lbx').close()}}
+    else if(n==='dopen'){if(!busy&&!$('#dlg').open)openDlg(null)}
+    else if(n==='dclose'){if($('#dlg').open&&!busy){dlgRem=true;$('#dlg').close()}}
+    else if(n==='dsel'){const it=items.find(x=>x.id===d.id);if(it&&it.ok&&!busy){d.on?sel.add(it.id):sel.delete(it.id);cur=it;const c=document.querySelector('#dopts input[data-id="'+it.id+'"]');if(c)c.checked=d.on;dlgPrev();count()}}
+    else if(n==='dall'&&!busy){items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count()}
+    else if(n==='dnone'&&!busy){sel.clear();drawOpts();count()}
+  }finally{rmU=false}}}}).catch(stripError);

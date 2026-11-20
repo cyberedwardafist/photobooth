@@ -36,7 +36,7 @@ function fill(el,R){el.innerHTML='';el.append(tile({name:info.name,stream},true)
 function chips(R){const hid=PFX+R.code,it=[{n:info.name,h:info.role==='host',me:true}];R.members.forEach((m,id)=>{if(id!==R.self)it.push({n:m.name,h:id===hid})});
   $('#chips').innerHTML=it.map(i=>`<li class="chip${i.h?' host':''}"><i>${esc(ini(i.n))}</i>${esc(i.n)}${i.me?' (kamu)':''}</li>`).join('')}
 function draw(R){room=R;PBC.R=R;syncAudio();PBC.self=R.self;fill($('#tiles'),R);chips(R);$('#rc').textContent=R.code;if(info.role==='host')info.code=R.code;
-  $('#go').hidden=info.role!=='host';$('#rsub').textContent=info.role==='host'?'Bagikan kode di atas ke temanmu, lalu mulai kalau semua sudah masuk.':'Menunggu pembuat ruang memulai...';
+  $('#go').hidden=false;$('#rsub').textContent='Bagikan kode di atas ke temanmu, lalu siapa pun bisa menekan mulai kalau semua sudah masuk.';
   if(started){fill($('#vc'),R);PBC.hook.members&&PBC.hook.members()}}
 const showTicket=on=>{$('#heroJoin').hidden=on;$('#ticket').hidden=!on;$('#hero').classList.toggle('slim',on)};
 const snap=()=>{const s=getState();return{lay:s.lay,photos:s.photos,adj:s.adj,frame:s.frame}};
@@ -44,7 +44,13 @@ function onApp(d){if(d.k==='big'){const b=bufs.get(d.id)||{n:d.n,p:[],c:0};b.p[d
   const h=PBC.hook||{};
   if(d.k==='state'){setState(d.patch);h.sync&&h.sync(d.patch)}
   else if(d.k==='ev')h.ev&&h.ev(d.name,d.data);
-  else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}}
+  else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}
+  else if(d.k==='navreq'&&info.role==='host'&&started&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}
+  else if(d.k==='startreq'&&info.role==='host'&&!started){room.started=true;room.start();runRoom()}
+  else if(d.k==='scroll'&&started){smute=performance.now()+700;scrollTo({top:d.r*Math.max(0,document.documentElement.scrollHeight-innerHeight),behavior:'instant'})}}
+/* gulir: siapa pun yang menggulir, layar yang lain mengikuti (berlaku di semua langkah). smute mencegah gema balik. */
+let smute=0,stm=0;
+addEventListener('scroll',()=>{if(!started||stm||performance.now()<smute)return;stm=setTimeout(()=>{stm=0;if(performance.now()<smute)return;PBC.send({k:'scroll',r:scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)})},120)},{passive:true});
 let fitFn=null;const fitH=()=>{const f=$('#app');if(!fitFn)return;if(innerWidth<=820)f.style.height=Math.max(innerHeight-70,520)+'px';else fitFn()};addEventListener('resize',fitH);
 function onLoad(){const f=$('#app'),w=f.contentWindow;let p;try{p=pageOf(new URL(w.location.href))}catch{return}
   page=p;csave();$('#vc').hidden=!['adjust','edit'].includes(p);if(!$('#vc').hidden)$('#vc').querySelectorAll('video').forEach(v=>v.play().catch(()=>{}));w.addEventListener('pagehide',()=>{PBC.hook={}});
@@ -62,7 +68,7 @@ async function enter(role,code,name,sv){$('#err').textContent='';if(!await cam()
 $('#mk').onclick=()=>enter('host',rand6(),nm($('#nameA').value));
 $('#jn').onclick=()=>{const c=$('#code').value.trim();if(!/^\d{6}$/.test(c)){$('#err').textContent='Kode harus 6 angka.';return}enter('guest',c,nm($('#nameB').value))};
 $('#code').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
-$('#go').onclick=()=>{room.started=true;room.start();runRoom()};
+$('#go').onclick=()=>{if(info.role==='guest'){PBC.send({k:'startreq'});return}room.started=true;room.start();runRoom()};
 const bye=async()=>{$('#vbar').hidden=true;pbSkip();cclear();if(room)room.leave();try{sessionStorage.removeItem(KEY)}catch{}try{await clipClear()}catch{}if(stream)stream.getTracks().forEach(t=>t.stop());location.href='/connect'};
 $('#lv').onclick=()=>{if(started&&!confirm('Keluar dari ruang? Foto yang sudah diambil akan hilang.'))return;bye()};
 $('#copy').onclick=async()=>{const b=$('#copy');try{await navigator.clipboard.writeText(room.code)}catch{}b.textContent='Tersalin';setTimeout(()=>{b.textContent='Salin kode'},1600)};

@@ -448,8 +448,6 @@ section.cta-band{padding:0 5vw 72px}
 .inframe section{padding-top:22px;padding-bottom:40px}
 .inframe .steps{margin-top:0}
 .inframe .sw:focus-within:not(.on) .retake{display:none}
-.guest #ctrls [inert],.guest #bgrow[inert],.guest #nextsec[inert]{opacity:.55}
-.guest #next,.guest .actbar .row a,.guest a[href="/foto"].btn{opacity:.5;cursor:not-allowed}
 /* kamera gabungan + panel Connect di halaman foto */
 #mix{position:absolute;inset:0;width:100%;height:100%}.stage #mix{transform:none}
 .cbar{display:grid;gap:12px;padding:18px 20px}

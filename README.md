@@ -57,10 +57,12 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 
 ## Connect
 `connect` adalah cangkang ruang: buat ruang (kode acak 6 digit, tidak bisa kembar) atau gabung dengan kode itu. Koneksi WebRTC (PeerJS, server sinyal publik via CDN) dibuat sekali di halaman ini dan tidak putus selama alur, karena halaman foto, atur foto, frame, dan unduh dimuat di dalam `<iframe id="app">`. Halaman di dalam iframe memakai `PBR` (di `common.js`) untuk bicara ke ruang: `pbSync(patch)` menyinkronkan state (`pb_state`) dan `pbEv(nama,data)` mengirim kejadian sesaat (hitung mundur, pilihan latar).
-- Foto: host yang mengatur (tata letak, ambil foto, ulang, kosongkan, latar). Foto hasil host dikirim ke tamu. Kamera semua peserta digabung dalam satu frame (orang dipotong dengan MediaPipe selfie segmenter, dari CDN). Tamu tidak punya live foto (klip video hanya direkam di perangkat host).
-- Atur foto dan Frame: host dan tamu sama-sama bisa mengubah, perubahan muncul di kedua sisi. Hanya host yang bisa lanjut/kembali, tamu otomatis ikut pindah halaman. Di dua langkah ini kamera semua peserta tampil berdampingan di atas halaman.
-- Unduh: sendiri-sendiri.
-
+- **Semua sinkron dua arah**: apa pun yang dilakukan host, tamu, atau tamu lain muncul di layar semua peserta. Host tetap jadi pusat: aksi tamu dikirim ke host sebagai permintaan (`lay`, `shootreq`, `retake`, `resetreq`, `upload`, `navreq`, `startreq`), host menjalankannya, lalu hasilnya (state, hitung mundur, pindah halaman) disebarkan ke semua. Pilihan yang tidak butuh keputusan pusat (latar, jeda foto, pilih slot, kategori/pencarian frame, filter, tampilan unduh) langsung disebarkan lewat host.
+- Foto: semua bisa mengubah tata letak, jeda foto, latar, memilih/mengulang slot, kosongkan semua, unggah foto (dikirim ke host lalu masuk slot), dan menekan Ambil foto. Foto hasilnya dikirim ke semua. Kamera semua peserta digabung dalam satu frame (orang dipotong dengan MediaPipe selfie segmenter, dari CDN). Klip live foto hanya direkam di perangkat host.
+- Atur foto dan Frame: semua bisa mengubah (filter, slider, frame, kategori, pencarian), muncul di semua sisi. Kamera semua peserta tampil berdampingan di atas halaman.
+- Pindah langkah (foto, atur foto, frame, unduh): siapa pun bisa menekan tautan langkah, semua ikut pindah. Tombol Mulai di ruang tunggu juga bisa ditekan siapa pun.
+- Gulir halaman: siapa pun yang menggulir, layar lain mengikuti (proporsional), di semua langkah (`connect.js`).
+- Unduh: penampil besar (buka, geser, tutup) dan dialog pilihan unduhan (buka, centang, pilih semua/kosongkan, tutup) ikut sinkron. Tombol Unduh tetap per perangkat, file disimpan di perangkat masing-masing. Item video/live hanya ada di perangkat host (klip tidak dikirim), jadi tamu tidak melihatnya.
 
 ## Grup frame dan frame buatan AI
 

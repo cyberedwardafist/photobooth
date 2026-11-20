@@ -56,13 +56,15 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 $('#shoot').onclick=async()=>{if(G){pbEv('shootreq');return}if(!stream||busy)return;busy=true;$('#shoot').disabled=true;
   pbEv('shoot',delay);await cd(delay);
   busy=false;const i=put(grab(640,480));if(CFG.live)recordLive(i,gen[i])};
-$('#t0').onclick=()=>{delay=0;pbEv('delay',0);$('#t0').setAttribute('aria-pressed','true');$('#t3').setAttribute('aria-pressed','false')};
-$('#t3').onclick=()=>{delay=CD;pbEv('delay',CD);$('#t3').setAttribute('aria-pressed','true');$('#t0').setAttribute('aria-pressed','false')};
-$('#file').onchange=async e=>{for(const f of e.target.files){try{const b=await createImageBitmap(f);put(toCanvas(b,b.width,b.height,false))}catch{alert('Berkas bukan gambar yang bisa dibaca: '+f.name)}}e.target.value=''};
+const setDelay=d=>{delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)};
+$('#t0').onclick=()=>{setDelay(0);pbEv('delay',0)};
+$('#t3').onclick=()=>{setDelay(CD);pbEv('delay',CD)};
+$('#file').onchange=async e=>{for(const f of e.target.files){try{const b=await createImageBitmap(f),c=toCanvas(b,b.width,b.height,false);if(G)pbEv('upload',c.toDataURL('image/jpeg',.85));else put(c)}catch{alert('Berkas bukan gambar yang bisa dibaca: '+f.name)}}e.target.value=''};
 const doReset=()=>{sel=-1;photos=photos.map(()=>null);adj=photos.map(()=>null);photos.forEach((_,i)=>gen[i]=(gen[i]||0)+1);clipClear().catch(()=>{});cur=0;persist();drawSlots()};
-$('#reset').onclick=doReset;$('#reset2').onclick=doReset;
-document.addEventListener('click',e=>{if(sel>=0&&!e.target.closest('.sw')){sel=-1;drawSlots()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sel>=0){sel=-1;drawSlots()}});
+const resetAll=()=>{if(G){pbEv('resetreq');return}doReset()};
+$('#reset').onclick=resetAll;$('#reset2').onclick=resetAll;
+document.addEventListener('click',e=>{if(sel>=0&&!e.target.closest('.sw')){sel=-1;pbEv('sel',{sel,cur});drawSlots()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sel>=0){sel=-1;pbEv('sel',{sel,cur});drawSlots()}});
 moveStage();
 (async()=>{await SETP;if(!CFG.open)return;
   if(!CFG.layouts.includes(lay))lay=CFG.layouts[0];CD=CFG.countdown;delay=CD;
@@ -128,17 +130,21 @@ function setMix(on){if(on===mixOn)return;mixOn=on;$('#mix').hidden=!on;if(on){lo
 const G=!!PBR&&PBR.role==='guest',gid=k=>k==='me'?room.self:k;
 async function cd(n){for(let i=n;i>0;i--){$('#count').textContent=i;await wait(1000)}$('#count').textContent=''}
 function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#ccode').textContent=room.code;
-  if(G){$('#gnote').hidden=false;['#reset2','#bgrow','#nextsec','#ctrls .seg','#ctrls label.btn','#reset'].forEach(s=>{const x=document.querySelector(s);if(x)x.inert=true})}
+  $('#gnote').hidden=false;
   PBR.hook={members:fillSel,sync:p=>{if(G){lastSig=sigOf(getState());applyRemote(p).catch(e=>console.warn('applyRemote',e))}},ev:(n,d)=>{
+    /* kejadian yang berlaku sama untuk semua peserta (host dan tamu) */
     if(n==='sel'){if(d&&d.sel<photos.length){sel=d.sel;cur=d.cur;drawSlots()}}
+    else if(n==='delay')setDelay(d);
+    else if(n==='bg'){bgId=d===room.self?'me':d;paintPick()}
+    /* host menjalankan permintaan peserta, hasilnya (state) disebarkan ke semua */
     else if(!G){
       if(n==='hello'){pbEv('bg',gid(bgId));pbEv('delay',delay);persist()}
       else if(n==='lay'){const b=document.querySelector(`[data-k="${d}"]`);if(b)b.click()}
       else if(n==='shootreq'){if(stream&&!busy&&!$('#shoot').disabled)$('#shoot').click()}
-      else if(n==='retake'){const i=d;if(photos[i]){photos[i]=null;adj[i]=null;bump(i);cur=i;sel=-1;persist();drawSlots()}}}
-    else{if(n==='shoot'){busy=true;drawSlots();cd(d).then(()=>{busy=false;drawSlots()})}
-      else if(n==='delay'){delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)}
-      else if(n==='bg'){bgId=d===room.self?'me':d;paintPick()}}}};
+      else if(n==='retake'){const i=d;if(photos[i]){photos[i]=null;adj[i]=null;bump(i);cur=i;sel=-1;persist();drawSlots()}}
+      else if(n==='resetreq')doReset();
+      else if(n==='upload'&&typeof d==='string')dataToCanvas(d).then(c=>put(c)).catch(()=>{})}
+    else if(n==='shoot'){busy=true;drawSlots();cd(d).then(()=>{busy=false;drawSlots()})}}};
   fillSel();if(G){lastSig=sigOf(getState());pbEv('hello');setInterval(pollState,250)}}
 /* jaring pengaman tamu: state dari host selalu disimpan oleh halaman ruang, jadi bandingkan dan tampilkan kalau berubah */
 let lastSig='';const sigOf=s=>(s.lay||'')+'|'+(s.photos||[]).map(x=>x?x.length+x.slice(-12):0).join(',');
