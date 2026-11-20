@@ -498,3 +498,5 @@ section.cta-band{padding:0 5vw 72px}
 .sf-bot a:hover{opacity:1;color:#fff;text-decoration:underline;text-underline-offset:4px}
 .site-foot :focus-visible{outline-color:#fff}
 @media(max-width:820px){.sf-in{grid-template-columns:1fr;gap:26px;padding:40px 6vw 24px}.site-foot{border-radius:22px 22px 0 0}.sf-bot{padding:14px 6vw 20px}}
+.sf-in,.sf-bot{width:min(1150px,90vw);max-width:none;padding-left:0;padding-right:0}
+@media(max-width:820px){.sf-in,.sf-bot{width:88vw;padding-left:0;padding-right:0}}
