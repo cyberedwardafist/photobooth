@@ -581,3 +581,69 @@ section.how.alt::after{content:"";position:absolute;left:0;right:0;top:-1px;heig
   .steps li[aria-current=step] b{width:36px;height:36px;box-shadow:0 0 0 4px rgba(230,165,195,.7)}
   .steps li[aria-current=step] span{padding:4px 10px}
 }
+
+/* ===== Dialog "Pilih yang mau diunduh" ===== */
+#dlg{width:min(1000px,94vw);border:2px solid var(--ink);border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 10px 0 rgba(30,45,90,.9),0 30px 70px rgba(30,45,90,.45)}
+#dlg::backdrop{background:radial-gradient(circle at 20% 10%,rgba(131,194,248,.45),transparent 45%),radial-gradient(circle at 85% 90%,rgba(230,165,195,.4),transparent 45%),rgba(30,45,90,.62);backdrop-filter:blur(3px)}
+#dlg .dhead{padding:18px 24px;border-bottom:2px solid var(--ink);background:linear-gradient(100deg,#CFE7FC 0%,#E4EAFB 55%,#F9DCE8 100%)}
+.dtitle{display:flex;align-items:center;gap:14px;min-width:0}
+.dico{flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:16px;background:var(--blue);color:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.dico svg{width:26px;height:26px}
+#dlg .dhead h3{font-size:24px}
+#dlg .dhead p{font-size:14.5px;margin-top:3px;line-height:1.35}
+#dlg .dhead .btn{flex:none;min-height:42px;background:#fff}
+#dlg .dbody{grid-template-columns:minmax(0,.9fr) minmax(300px,1.1fr);gap:24px;padding:22px 24px 24px;height:min(620px,calc(92vh - 96px));overflow:hidden;max-height:none}
+/* pratinjau */
+#dlg .dprev{align-self:stretch;align-content:center;gap:16px;padding:22px;border-radius:20px;border:2px solid rgba(30,45,90,.85);overflow:hidden;
+  background:radial-gradient(rgba(47,91,181,.2) 1.5px,transparent 1.6px) 0 0/22px 22px,linear-gradient(160deg,#D4ECFD,#E9E2F8 55%,#FADDE9)}
+#dcv{max-width:100%;max-height:min(420px,48vh);width:auto;height:auto;background:#fff;border-radius:6px;padding:8px;box-shadow:0 10px 0 rgba(30,45,90,.18),0 18px 30px rgba(30,45,90,.2);transform:rotate(-1.2deg)}
+#dcap{padding:7px 14px;border-radius:999px;background:#fff;border:2px solid var(--ink);font-weight:700;font-size:14px;text-align:center;line-height:1.35}
+/* daftar pilihan */
+#dlg .dlist{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+#dopts{flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;gap:14px;align-content:start;padding:2px 6px 6px 2px;margin-right:-6px}
+#dopts fieldset{gap:8px;min-width:0}
+#dopts legend{display:flex;align-items:center;gap:9px;font:600 16px Fredoka,Nunito,sans-serif;margin:0 0 6px;padding:0}
+#dopts legend::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--dot,var(--blue));box-shadow:0 0 0 2px var(--ink)}
+#dopts fieldset:nth-of-type(1){--dot:var(--blue)}#dopts fieldset:nth-of-type(2){--dot:var(--pink)}#dopts fieldset:nth-of-type(3){--dot:var(--teal)}#dopts fieldset:nth-of-type(4){--dot:#E8B974}
+#dlg .opt{position:relative;min-height:54px;padding:8px 14px;gap:14px;border-radius:16px;background:#fff;border:2px solid rgba(30,45,90,.18);box-shadow:0 3px 0 rgba(30,45,90,.08);transition:transform .12s,border-color .12s,background .12s,box-shadow .12s}
+#dlg .opt:hover:not(.off){transform:translateY(-1px);border-color:rgba(47,91,181,.55)}
+#dlg .opt:has(input:checked){background:#EAF0FC;border-color:var(--blue);box-shadow:0 4px 0 var(--blue)}
+#dlg .opt:has(input:focus-visible){outline:3px solid var(--ink);outline-offset:2px}
+#dlg .opt input{appearance:none;-webkit-appearance:none;flex:none;display:grid;place-items:center;width:26px;height:26px;margin:0;border-radius:9px;background:#fff;border:2px solid var(--ink);cursor:pointer}
+#dlg .opt input::after{content:"";width:6px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:translateY(-1px) rotate(45deg) scale(0);transition:transform .12s}
+#dlg .opt input:checked{background:var(--blue)}
+#dlg .opt input:checked::after{transform:translateY(-1px) rotate(45deg) scale(1)}
+#dlg .opt input:disabled{border-color:rgba(30,45,90,.3);background:rgba(30,45,90,.06);cursor:not-allowed}
+#dlg .opt span{font-size:16.5px;line-height:1.25}
+#dlg .opt small{margin-top:2px;font-size:13px;line-height:1.35;opacity:.8}
+#dlg .opt em{flex:none;padding:3px 10px;border-radius:999px;background:var(--ink);color:#fff;font:700 11.5px Nunito,sans-serif;letter-spacing:.04em;opacity:1}
+#dlg .opt.off{background:rgba(30,45,90,.04);border-style:dashed;box-shadow:none}
+#dlg .opt.off em{background:rgba(30,45,90,.4)}
+/* aksi */
+#dlg .dlist>.row{flex:none;display:flex;gap:8px;flex-wrap:wrap}
+#dlg .dlist>.row .btn{min-height:38px;padding:0 16px;font-size:15px;border-radius:999px}
+#dlg #go{flex:none;min-height:54px;font-size:18px;border-radius:16px;box-shadow:0 5px 0 #1B3A7C}
+#dlg #go:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 0 #1B3A7C}
+#dlg #go:disabled{box-shadow:none}
+#dlg .dlist .note{flex:none;font-size:13.5px;line-height:1.45}
+#dlg #prog:empty{display:none}
+#dlg #prog{padding:8px 12px;border-radius:12px;background:var(--mist);font-weight:700}
+@media(max-width:820px){
+  #dlg{width:96vw;border-radius:22px;box-shadow:0 6px 0 rgba(30,45,90,.9),0 20px 40px rgba(30,45,90,.4)}
+  #dlg .dhead{padding:12px 14px}.dico{width:40px;height:40px;border-radius:13px}.dico svg{width:22px;height:22px}
+  #dlg .dhead h3{font-size:19px}#dlg .dhead p{display:none}
+  #dlg .dbody{grid-template-columns:1fr;gap:12px;padding:12px 14px 14px;height:auto;max-height:calc(94vh - 70px);overflow:auto}
+  #dlg .dprev{padding:12px;gap:10px;border-radius:16px}#dcv{max-height:24vh}
+  #dcap{font-size:13px;padding:5px 12px}
+  #dopts{overflow:visible;margin-right:0;padding:0}
+  #dlg .dlist{min-height:auto}
+  #dlg #go{position:sticky;bottom:0;z-index:2;box-shadow:0 5px 0 #1B3A7C,0 -12px 10px #fff}
+}
+/* penyempurnaan dialog unduh */
+@media(min-width:821px){
+  #dlg .dbody{height:min(700px,calc(94vh - 96px));gap:22px}
+  #dlg .opt{min-height:48px;padding:6px 14px}
+  #dopts{gap:12px;padding-bottom:20px;-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
+  #dlg .dlist .note{font-size:12.5px;line-height:1.4}
+  #dcap{font-size:13.5px}
+}
