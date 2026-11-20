@@ -62,7 +62,7 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 - Atur foto dan Frame: semua bisa mengubah (filter, slider, frame, kategori, pencarian), muncul di semua sisi. Kamera semua peserta tampil berdampingan di atas halaman.
 - Pindah langkah (foto, atur foto, frame, unduh): siapa pun bisa menekan tautan langkah, semua ikut pindah. Tombol Mulai di ruang tunggu juga bisa ditekan siapa pun.
 - Gulir halaman: siapa pun yang menggulir, layar lain mengikuti (proporsional), di semua langkah (`connect.js`).
-- Unduh: penampil besar (buka, geser, tutup) dan dialog pilihan unduhan (buka, centang, pilih semua/kosongkan, tutup) ikut sinkron. Tombol Unduh tetap per perangkat, file disimpan di perangkat masing-masing. Item video/live hanya ada di perangkat host (klip tidak dikirim), jadi tamu tidak melihatnya.
+- Unduh: penampil besar (buka, geser, tutup) ikut sinkron. Dialog "Pilih yang mau diunduh" (buka, centang, pilih semua/kosongkan) dan tombol Unduh sengaja per perangkat: tiap orang memilih dan menyimpan sendiri. Item video/live hanya ada di perangkat host (klip tidak dikirim), jadi tamu tidak melihatnya.
 
 ## Grup frame dan frame buatan AI
 

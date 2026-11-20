@@ -3,7 +3,8 @@ Promise.all([loadStrip(),SETP]).then(([s])=>{const saved=s.st.frame||(s.st.bg?fr
   let cur=list.find(f=>f.id===(saved&&saved.id))||FRAMES[0];
   const show=f=>{$('#picked').textContent=f.name};
   const gal=Gallery({lay:s.lay,imgs:s.imgs,adj:s.adj,cur,onPick:f=>{cur=f;setState({frame:f,bg:undefined,ink:undefined});pbSync({frame:f});show(f)}});
-  show(cur);$('#msg').hidden=true;$('#ui').hidden=false;gal.add(list);gal.loadTpls();if(PBR)PBR.hook={sync:p=>{if(p.frame){cur=p.frame;gal.select(cur);show(cur)}},ev:remoteEv}}).catch(stripError);
+  show(cur);$('#msg').hidden=true;$('#ui').hidden=false;gal.add(list);gal.loadTpls();if(PBR){PBR.hook={sync:p=>{if(p.frame){cur=p.frame;gal.select(cur);show(cur)}},ev:remoteEv};
+  setInterval(()=>{const f=getState().frame;if(f&&f.id&&f.id!==cur.id){cur=f;gal.select(cur);show(cur)}},300)}}).catch(stripError);
 
 /* Connect: kategori dan pencarian ikut tersinkron dua arah (gulir diurus halaman induk, connect.js) */
 let rm=false;

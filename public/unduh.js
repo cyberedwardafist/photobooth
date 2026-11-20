@@ -6,7 +6,7 @@ const VID=(()=>{if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureSt
 const FMS=1000/LIVE.FPS,HOLD=500,SLIDE=900;
 const clipCyc=c=>c.frames.length*FMS+HOLD;
 const frameAt=(c,t)=>c.frames[Math.min(c.frames.length-1,Math.floor((t%clipCyc(c))/FMS))];
-let rmU=false,lbxRem=false,dlgRem=false;const U=(n,d)=>{if(PBR&&!rmU)pbEv(n,d)};
+let rmU=false,lbxRem=false;const U=(n,d)=>{if(PBR&&!rmU)pbEv(n,d)};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const photoCv=(cv,s)=>{cv.width=Math.round(640*s/2)*2;cv.height=Math.round(480*s/2)*2;return cv.getContext('2d')};
 
@@ -70,14 +70,14 @@ function drawOpts(){const box=$('#dopts');box.innerHTML='';const groups=[...new 
     const f=document.createElement('fieldset');f.innerHTML=`<legend>${g}</legend>`;
     list.forEach(it=>{const l=document.createElement('label');l.className='opt'+(it.ok?'':' off');
       l.innerHTML=`<input type="checkbox" data-id="${it.id}" ${it.ok?'':'disabled'} ${sel.has(it.id)?'checked':''}><span>${esc(g==='Live foto'&&!it.ok?'Live foto':it.label)}${it.ok?'':`<small>${esc(it.why)}</small>`}</span><em>${it.ext.toUpperCase()}</em>`;f.append(l)});box.append(f)});
-  box.querySelectorAll('input').forEach(c=>c.onchange=()=>{const it=items.find(x=>x.id===c.dataset.id);c.checked?sel.add(it.id):sel.delete(it.id);cur=it;dlgPrev();count();U('dsel',{id:it.id,on:c.checked})})}
+  box.querySelectorAll('input').forEach(c=>c.onchange=()=>{const it=items.find(x=>x.id===c.dataset.id);c.checked?sel.add(it.id):sel.delete(it.id);cur=it;dlgPrev();count()})}
 function count(){const n=sel.size;$('#go').disabled=!n||busy;$('#go').textContent=n?`Unduh ${n} file terpilih`:'Pilih dulu yang mau diunduh'}
-function openDlg(it){sel.clear();items.filter(i=>i.ok).forEach(i=>sel.add(i.id));cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';if(!$('#dlg').open)$('#dlg').showModal();dlgPrev();U('dopen')}
+function openDlg(it){sel.clear();items.filter(i=>i.ok).forEach(i=>sel.add(i.id));cur=it||items.find(i=>i.ok);drawOpts();count();$('#prog').textContent='';if(!$('#dlg').open)$('#dlg').showModal();dlgPrev()}
 $('#open').onclick=()=>openDlg(null);
-$('#dlg').addEventListener('close',()=>{cancelAnimationFrame(dlgLoop);if(dlgRem){dlgRem=false;return}U('dclose')});
+$('#dlg').addEventListener('close',()=>cancelAnimationFrame(dlgLoop));
 $('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()});
-$('#selAll').onclick=()=>{items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count();U('dall')};
-$('#selNone').onclick=()=>{sel.clear();drawOpts();count();U('dnone')};
+$('#selAll').onclick=()=>{items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count()};
+$('#selNone').onclick=()=>{sel.clear();drawOpts();count()};
 
 /* pembuatan file */
 function record(it,onp){return new Promise((ok,no)=>{const cv=document.createElement('canvas'),loops=Math.max(1,Math.ceil(4000/it.cyc)),total=it.cyc*loops;
@@ -107,9 +107,4 @@ Promise.all([loadStrip(),SETP]).then(async([s])=>{S=s;frame=frameOf(s.st);
   if(PBR)PBR.hook={ev:(n,d)=>{rmU=true;try{
     if(n==='vshow'){const it=items.find(x=>x.id===d);if(it&&it.ok){if(!$('#lbx').open)$('#lbx').showModal();showV(vlist().indexOf(it),0)}}
     else if(n==='vclose'){if($('#lbx').open){lbxRem=true;$('#lbx').close()}}
-    else if(n==='dopen'){if(!busy&&!$('#dlg').open)openDlg(null)}
-    else if(n==='dclose'){if($('#dlg').open&&!busy){dlgRem=true;$('#dlg').close()}}
-    else if(n==='dsel'){const it=items.find(x=>x.id===d.id);if(it&&it.ok&&!busy){d.on?sel.add(it.id):sel.delete(it.id);cur=it;const c=document.querySelector('#dopts input[data-id="'+it.id+'"]');if(c)c.checked=d.on;dlgPrev();count()}}
-    else if(n==='dall'&&!busy){items.filter(i=>i.ok).forEach(i=>sel.add(i.id));drawOpts();count()}
-    else if(n==='dnone'&&!busy){sel.clear();drawOpts();count()}
   }finally{rmU=false}}}}).catch(stripError);
