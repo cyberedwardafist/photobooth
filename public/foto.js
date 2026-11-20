@@ -125,7 +125,7 @@ const G=!!PBR&&PBR.role==='guest',gid=k=>k==='me'?room.self:k;
 async function cd(n){for(let i=n;i>0;i--){$('#count').textContent=i;await wait(1000)}$('#count').textContent=''}
 function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#ccode').textContent=room.code;
   if(G){$('#gnote').hidden=false;['#reset2','#bgrow','#nextsec','#ctrls .seg','#ctrls label.btn','#reset'].forEach(s=>{const x=document.querySelector(s);if(x)x.inert=true})}
-  PBR.hook={members:fillSel,sync:p=>{if(G)applyRemote(p)},ev:(n,d)=>{
+  PBR.hook={members:fillSel,sync:p=>{if(G){lastSig=sigOf(getState());applyRemote(p).catch(e=>console.warn('applyRemote',e))}},ev:(n,d)=>{
     if(n==='sel'){if(d&&d.sel<photos.length){sel=d.sel;cur=d.cur;drawSlots()}}
     else if(!G){
       if(n==='hello'){pbEv('bg',gid(bgId));pbEv('delay',delay);persist()}
@@ -135,7 +135,10 @@ function initRoom(){if(!PBR||room)return;room=PBR.R;$('#cbar').hidden=false;$('#
     else{if(n==='shoot'){busy=true;drawSlots();cd(d).then(()=>{busy=false;drawSlots()})}
       else if(n==='delay'){delay=d;$('#t0').setAttribute('aria-pressed',d===0);$('#t3').setAttribute('aria-pressed',d!==0)}
       else if(n==='bg'){bgId=d===room.self?'me':d;paintPick()}}}};
-  fillSel();if(G)pbEv('hello')}
+  fillSel();if(G){lastSig=sigOf(getState());pbEv('hello');setInterval(pollState,250)}}
+/* jaring pengaman tamu: state dari host selalu disimpan oleh halaman ruang, jadi bandingkan dan tampilkan kalau berubah */
+let lastSig='';const sigOf=s=>(s.lay||'')+'|'+(s.photos||[]).map(x=>x?x.length+x.slice(-12):0).join(',');
+function pollState(){const s=getState(),g=sigOf(s);if(g!==lastSig){lastSig=g;applyRemote(s).catch(e=>console.warn('applyRemote',e))}}
 async function applyRemote(p){if(p.lay===undefined&&p.photos===undefined)return;if(LAY[p.lay])lay=p.lay;const n=count(),src=p.photos||[];
   photos=await Promise.all(Array.from({length:n},(_,i)=>src[i]?dataToCanvas(src[i]).catch(()=>null):null));
   adj=Array.from({length:n},(_,i)=>(p.adj||[])[i]||null);cur=Math.max(0,photos.indexOf(null));sel=-1;drawLayouts();drawSlots()}
