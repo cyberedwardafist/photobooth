@@ -10,7 +10,7 @@ async function openRoom(o,stream,cb={}){
   const R={code:o.code,role:o.role,members:new Map(),self:null,closed:false,started:!!o.started};/* members: id -> {name,stream} */
   const conns=new Map(),called=new Set(),ch=()=>cb.onChange&&cb.onChange(R);
   const P=window.Peer;if(!P){cb.onError&&cb.onError('Pustaka koneksi gagal dimuat. Periksa internet lalu muat ulang.');return R}
-  const send=(c,m)=>{try{c.send(m)}catch{}};
+  const send=(c,m)=>{try{c.send(m)}catch(e){console.warn('send gagal',e)}};
   const drop=id=>{conns.delete(id);called.delete(id);if(R.members.delete(id))ch()};
   const callTo=(peer,id)=>{if(called.has(id)||id===peer.id)return;called.add(id);
     const c=peer.call(id,stream,{metadata:{name:o.name}});c.on('stream',s=>{const m=R.members.get(id)||{name:'Teman'};m.stream=s;R.members.set(id,m);ch()});c.on('close',()=>drop(id))};

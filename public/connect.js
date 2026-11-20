@@ -1,6 +1,11 @@
 let stream=null,room=null,info=null,started=false,page='foto';
 /* objek ruang yang dipakai halaman di dalam iframe (lihat PBR di common.js) */
-window.PBC={role:null,self:null,stream:null,R:null,hook:{},send:m=>room&&room.bcast(m)};
+/* pesan besar (foto) dipecah jadi potongan kecil dan dikirim berurutan, supaya pasti sampai lewat koneksi P2P */
+const MAXC=8000,bufs=new Map();let bid=0,qchain=Promise.resolve();
+function sendMsg(m,raw){const s=JSON.stringify(m);if(s.length<=MAXC){raw(m);return}
+  const id=Math.random().toString(36).slice(2)+(++bid),n=Math.ceil(s.length/MAXC);
+  qchain=qchain.then(async()=>{for(let i=0;i<n;i++){raw({k:'big',id,i,n,part:s.slice(i*MAXC,(i+1)*MAXC)});if(i%4===3)await new Promise(r=>setTimeout(r,4))}})}
+window.PBC={role:null,self:null,stream:null,R:null,hook:{},send:m=>room&&sendMsg(m,x=>room.bcast(x))};
 const CK='pb_conn',cread=()=>{try{return JSON.parse(sessionStorage.getItem(CK))}catch{return null}},cclear=()=>{try{sessionStorage.removeItem(CK)}catch{}},
   csave=()=>{if(info&&info.code)try{sessionStorage.setItem(CK,JSON.stringify({role:info.role,code:info.code,name:info.name,started,page}))}catch{}};
 const nm=v=>(v||'').trim().slice(0,20)||'Tamu',PAGES=['foto','adjust','edit','unduh'];
@@ -12,7 +17,8 @@ function draw(R){room=R;PBC.R=R;PBC.self=R.self;fill($('#tiles'),R);$('#rc').tex
   $('#go').hidden=info.role!=='host';$('#wt').hidden=info.role==='host';
   if(started){fill($('#vc'),R);$('#rn').textContent=(R.members.size+1)+' orang';PBC.hook.members&&PBC.hook.members()}}
 const snap=()=>{const s=getState();return{lay:s.lay,photos:s.photos,adj:s.adj,frame:s.frame}};
-function onApp(d){const h=PBC.hook||{};
+function onApp(d){if(d.k==='big'){const b=bufs.get(d.id)||{n:d.n,p:[],c:0};b.p[d.i]=d.part;if(++b.c===b.n){bufs.delete(d.id);try{onApp(JSON.parse(b.p.join('')))}catch(e){console.warn('big',e)}}else bufs.set(d.id,b);return}
+  const h=PBC.hook||{};
   if(d.k==='state'){setState(d.patch);h.sync&&h.sync(d.patch)}
   else if(d.k==='ev')h.ev&&h.ev(d.name,d.data);
   else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src=d.page+'.html'}}
@@ -26,7 +32,7 @@ function runRoom(resume){if(started)return;started=true;if(resume!==true){try{se
 async function enter(role,code,name,sv){$('#err').textContent='';if(!await cam())return;
   info={role,code,name,fresh:!sv};
   room=await openRoom({...info,started:!!(sv&&sv.started)},stream,{onChange:draw,onApp,onStart:()=>runRoom(),
-    onLate:(c,send)=>{send(c,{t:'start'});send(c,{t:'app',k:'state',patch:snap()});send(c,{t:'app',k:'nav',page})},
+    onLate:(c,send)=>{send(c,{t:'start'});sendMsg({k:'state',patch:snap()},x=>send(c,{t:'app',...x}));send(c,{t:'app',k:'nav',page})},
     onError:t=>{cclear();$('#err').textContent=t;$('#vJoin').hidden=false;$('#vRoom').hidden=true}});
   if(!room.self)return;info.code=room.code;$('#vJoin').hidden=true;$('#vRoom').hidden=false;draw(room);csave();if(sv&&sv.started)runRoom(true)}
 $('#mk').onclick=()=>enter('host',rand6(),nm($('#nameA').value));
