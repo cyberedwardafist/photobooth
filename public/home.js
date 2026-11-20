@@ -14,3 +14,4 @@ $('#nFrames').textContent=FRAMES.length;
     const cap=document.createElement('figcaption');cap.textContent=f.name;fig.append(im,cap);return fig});
   items.forEach(n=>track.append(n));
   items.forEach(n=>{const c=n.cloneNode(true);c.setAttribute('aria-hidden','true');c.querySelector('img').alt='';track.append(c)})})();
+document.getElementById("yr").textContent=new Date().getFullYear();
