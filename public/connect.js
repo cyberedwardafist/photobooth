@@ -2,7 +2,7 @@ let stream=null,room=null,info=null,started=false,page='foto';
 /* objek ruang yang dipakai halaman di dalam iframe (lihat PBR di common.js) */
 /* pesan besar (foto) dipecah jadi potongan kecil dan dikirim berurutan, supaya pasti sampai lewat koneksi P2P */
 const MAXC=8000,bufs=new Map();let bid=0,qchain=Promise.resolve();
-function sendMsg(m,raw){const s=JSON.stringify(m);if(s.length<=MAXC){raw(m);return}
+function sendMsg(m,raw){const s=JSON.stringify(m);/* salin lewat JSON: objek dari iframe berbeda realm, PeerJS menolaknya */if(s.length<=MAXC){raw(JSON.parse(s));return}
   const id=Math.random().toString(36).slice(2)+(++bid),n=Math.ceil(s.length/MAXC);
   qchain=qchain.then(async()=>{for(let i=0;i<n;i++){raw({k:'big',id,i,n,part:s.slice(i*MAXC,(i+1)*MAXC)});if(i%4===3)await new Promise(r=>setTimeout(r,4))}})}
 window.PBC={role:null,self:null,stream:null,R:null,hook:{},send:m=>room&&sendMsg(m,x=>room.bcast(x))};
