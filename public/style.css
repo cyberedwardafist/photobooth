@@ -444,3 +444,4 @@ section.cta-band{padding:0 5vw 72px}
   .booth>.panel.pb{grid-column:2;grid-row:1/span 2}.panel.pb>#cbar{order:1}.panel.pb>#nextsec{order:2}}
 @media(min-width:821px){.booth{grid-template-rows:auto 1fr;row-gap:14px}.booth>.stage{align-self:start}}
 .guest #ctrls [inert]{opacity:.55}
+.inframe .sw:focus-within:not(.on) .retake{display:none}
