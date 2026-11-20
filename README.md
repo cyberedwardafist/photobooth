@@ -67,3 +67,7 @@ Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) 
 - **Grup**: di admin > Frame, tiap kartu punya pilihan Grup (frame bawaan, template warna, dan frame kustom semuanya bisa). Grup jadi filter di halaman frame pengunjung. "Ubah nama grup" memindahkan semua anggotanya sekaligus. Perubahan disimpan lewat tombol Simpan (disimpan di pengaturan situs, kunci `groups`).
 - **Unggah frame**: admin > Unggah. Salin perintah untuk AI, minta frame yang kamu mau, simpan jawabannya sebagai `.json`, lalu unggah. Format dan batasnya ada di `public/framespec.js` (satu sumber untuk peramban dan server; server memeriksa ulang). Frame kustom disimpan di tabel `templates` kolom `spec`.
 - **Migrasi**: jalankan `npm run migrate` sekali agar kolom `spec` ada (idempoten). Mode lokal (`data.json`) tidak perlu migrasi.
+
+## Suara di Connect
+
+Kamera Connect sekarang membawa mikrofon (`getUserMedia` dengan `audio`), jadi host dan teman bisa bicara seperti video call dari ruang tunggu sampai unduh. Suara teman diputar dari halaman Connect (induk), bukan dari iframe, jadi tidak putus saat pindah langkah. Tombol Mic dan Suara teman ada di pojok kanan bawah. Kalau mikrofon ditolak, kamera tetap jalan tanpa suara. Pemotretan solo (tanpa Connect) tetap tanpa mikrofon.

@@ -656,3 +656,9 @@ section.how.alt::after{content:"";position:absolute;left:0;right:0;top:-1px;heig
 .pbx-card{width:min(440px,100%);padding:34px 28px;border:2px solid var(--ink);border-radius:24px;background:#fff;box-shadow:0 8px 0 rgba(30,45,90,.9);text-align:center;display:grid;gap:14px;justify-items:center}
 .pbx-card h2{font-size:30px}
 .pbx-on{overflow:hidden}
+
+/* Connect: suara */
+.vnote{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14.5px}
+.vbar{position:fixed;z-index:40;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:8px;padding:8px;border-radius:16px;background:#fff;box-shadow:0 6px 22px rgba(30,45,90,.28)}
+.vbar .btn{min-height:44px}
+.vbar button[aria-pressed=false]{background:#FBE3EE;border-color:#D9658F;color:#6B1330}

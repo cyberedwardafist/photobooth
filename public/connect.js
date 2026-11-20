@@ -9,14 +9,33 @@ window.PBC={role:null,self:null,stream:null,R:null,hook:{},send:m=>room&&sendMsg
 const CK='pb_conn',cread=()=>{try{return JSON.parse(sessionStorage.getItem(CK))}catch{return null}},cclear=()=>{try{sessionStorage.removeItem(CK)}catch{}},
   csave=()=>{if(info&&info.code)try{sessionStorage.setItem(CK,JSON.stringify({role:info.role,code:info.code,name:info.name,started,page}))}catch{}};
 const nm=v=>(v||'').trim().slice(0,20)||'Tamu',PAGES=['foto','adjust','edit','unduh'];
-async function cam(){if(stream)return stream;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640}},audio:false})}catch{stream=null;$('#err').textContent='Kamera tidak bisa dipakai. Izinkan akses kamera di peramban.'}return stream}
+/* Kamera + mikrofon (suara) dalam satu stream; kalau mikrofon ditolak, kamera tetap jalan tanpa suara */
+let micOk=false,spkOn=true,blocked=false;
+async function cam(){if(stream)return stream;const v={facingMode:'user',width:{ideal:640}},md=navigator.mediaDevices;
+  try{stream=await md.getUserMedia({video:v,audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});micOk=stream.getAudioTracks().length>0}
+  catch{try{stream=await md.getUserMedia({video:v,audio:false});micOk=false}catch{stream=null;$('#err').textContent='Kamera tidak bisa dipakai. Izinkan akses kamera di peramban.'}}
+  return stream}
+function micBtn(){const b=$('#mic');if(!micOk){b.disabled=true;b.textContent='Mic tidak tersedia';b.title='Izinkan mikrofon di peramban, lalu muat ulang halaman';b.setAttribute('aria-pressed','false');return}
+  const on=stream.getAudioTracks().some(t=>t.enabled);b.setAttribute('aria-pressed',on);b.textContent=on?'Mic aktif':'Mic mati'}
+function spkBtn(){const b=$('#spk');b.setAttribute('aria-pressed',spkOn&&!blocked);b.textContent=blocked?'Ketuk untuk suara':spkOn?'Suara teman nyala':'Suara teman mati'}
+/* suara teman diputar dari halaman induk ini, jadi tidak putus saat pindah langkah di dalam iframe */
+const auds=new Map();
+function syncAudio(){const box=$('#aud'),live=new Set();let bl=false;
+  if(room)room.members.forEach((m,id)=>{if(id===room.self||!m.stream||!m.stream.getAudioTracks().length)return;live.add(id);
+    let a=auds.get(id);if(!a){a=document.createElement('audio');a.autoplay=true;box.append(a);auds.set(id,a)}
+    if(a.srcObject!==m.stream)a.srcObject=m.stream;a.muted=!spkOn;if(a.paused)a.play().catch(()=>{bl=true})});
+  auds.forEach((a,id)=>{if(!live.has(id)){a.srcObject=null;a.remove();auds.delete(id)}});
+  if(bl!==blocked){blocked=bl;spkBtn()}}
+$('#mic').onclick=()=>{if(!micOk)return;const on=!stream.getAudioTracks()[0].enabled;stream.getAudioTracks().forEach(t=>t.enabled=on);micBtn()};
+$('#spk').onclick=()=>{if(blocked){blocked=false;syncAudio();return}spkOn=!spkOn;syncAudio();spkBtn()};
+addEventListener('pointerdown',()=>{if(blocked)syncAudio()});setInterval(()=>{if(blocked)syncAudio()},1500);
 const ini=n=>(n||'?').trim().charAt(0).toUpperCase();
 function tile(m,me){const d=document.createElement('div');d.className='tile';const v=document.createElement('video');v.autoplay=true;v.muted=true;v.playsInline=true;if(me)v.className='me';
   if(m.stream)v.srcObject=m.stream;d.append(v);const s=document.createElement('span');s.textContent=m.name+(me?' (kamu)':'');d.append(s);return d}
 function fill(el,R){el.innerHTML='';el.append(tile({name:info.name,stream},true));R.members.forEach((m,id)=>{if(id!==R.self)el.append(tile(m,false))})}
 function chips(R){const hid=PFX+R.code,it=[{n:info.name,h:info.role==='host',me:true}];R.members.forEach((m,id)=>{if(id!==R.self)it.push({n:m.name,h:id===hid})});
   $('#chips').innerHTML=it.map(i=>`<li class="chip${i.h?' host':''}"><i>${esc(ini(i.n))}</i>${esc(i.n)}${i.me?' (kamu)':''}</li>`).join('')}
-function draw(R){room=R;PBC.R=R;PBC.self=R.self;fill($('#tiles'),R);chips(R);$('#rc').textContent=R.code;if(info.role==='host')info.code=R.code;
+function draw(R){room=R;PBC.R=R;syncAudio();PBC.self=R.self;fill($('#tiles'),R);chips(R);$('#rc').textContent=R.code;if(info.role==='host')info.code=R.code;
   $('#go').hidden=info.role!=='host';$('#rsub').textContent=info.role==='host'?'Bagikan kode di atas ke temanmu, lalu mulai kalau semua sudah masuk.':'Menunggu pembuat ruang memulai...';
   if(started){fill($('#vc'),R);PBC.hook.members&&PBC.hook.members()}}
 const showTicket=on=>{$('#heroJoin').hidden=on;$('#ticket').hidden=!on;$('#hero').classList.toggle('slim',on)};
@@ -39,12 +58,12 @@ async function enter(role,code,name,sv){$('#err').textContent='';if(!await cam()
   room=await openRoom({...info,started:!!(sv&&sv.started)},stream,{onChange:draw,onApp,onStart:()=>runRoom(),
     onLate:(c,send)=>{send(c,{t:'start'});sendMsg({k:'state',patch:snap()},x=>send(c,{t:'app',...x}));send(c,{t:'app',k:'nav',page})},
     onError:t=>{cclear();$('#err').textContent=t;$('#vJoin').hidden=false;$('#vRoom').hidden=true;showTicket(false)}});
-  if(!room.self)return;info.code=room.code;$('#vJoin').hidden=true;$('#vRoom').hidden=false;showTicket(true);draw(room);csave();if(sv&&sv.started)runRoom(true)}
+  if(!room.self)return;$('#vbar').hidden=false;micBtn();spkBtn();info.code=room.code;$('#vJoin').hidden=true;$('#vRoom').hidden=false;showTicket(true);draw(room);csave();if(sv&&sv.started)runRoom(true)}
 $('#mk').onclick=()=>enter('host',rand6(),nm($('#nameA').value));
 $('#jn').onclick=()=>{const c=$('#code').value.trim();if(!/^\d{6}$/.test(c)){$('#err').textContent='Kode harus 6 angka.';return}enter('guest',c,nm($('#nameB').value))};
 $('#code').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
 $('#go').onclick=()=>{room.started=true;room.start();runRoom()};
-const bye=async()=>{pbSkip();cclear();if(room)room.leave();try{sessionStorage.removeItem(KEY)}catch{}try{await clipClear()}catch{}if(stream)stream.getTracks().forEach(t=>t.stop());location.href='/connect'};
+const bye=async()=>{$('#vbar').hidden=true;pbSkip();cclear();if(room)room.leave();try{sessionStorage.removeItem(KEY)}catch{}try{await clipClear()}catch{}if(stream)stream.getTracks().forEach(t=>t.stop());location.href='/connect'};
 $('#lv').onclick=()=>{if(started&&!confirm('Keluar dari ruang? Foto yang sudah diambil akan hilang.'))return;bye()};
 $('#copy').onclick=async()=>{const b=$('#copy');try{await navigator.clipboard.writeText(room.code)}catch{}b.textContent='Tersalin';setTimeout(()=>{b.textContent='Salin kode'},1600)};
 

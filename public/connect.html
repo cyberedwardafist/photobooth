@@ -41,6 +41,7 @@
           <label class="fld">Kode ruang<input id="code" class="codein" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off"></label>
           <button class="btn alt big-cta" id="jn">Gabung ruang</button></div>
       </div>
+      <p class="vnote">Mikrofon ikut dipakai supaya kalian bisa saling bicara. Pakai headset agar tidak bergema.</p>
       <p id="err" role="alert"></p>
     </div>
     <div id="vRoom" hidden>
@@ -54,6 +55,8 @@
     <iframe id="app" title="Photobooth bersama" allow="camera"></iframe>
   </section>
 </main>
+<div class="vbar" id="vbar" role="group" aria-label="Suara" hidden><button type="button" class="btn alt sm" id="mic" aria-pressed="true">Mic aktif</button><button type="button" class="btn alt sm" id="spk" aria-pressed="true">Suara teman nyala</button></div>
+<div id="aud" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="common.js"></script>
 <script src="connect-core.js"></script>
