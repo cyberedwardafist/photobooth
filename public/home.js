@@ -1,5 +1,5 @@
 /* Mulai dari Home = tanpa frame pilihan */
-document.querySelectorAll('a[href="foto.html"]').forEach(a=>a.addEventListener('click',()=>setState({frame:undefined,bg:undefined,ink:undefined})));
+document.querySelectorAll('a[href="/foto"]').forEach(a=>a.addEventListener('click',()=>setState({frame:undefined,bg:undefined,ink:undefined})));
 SETP.then(()=>{$('#nFrames').textContent=visibleFrames().length});
 /* muncul perlahan saat di-scroll (dimatikan bila pengguna memilih kurangi gerakan) */
 {const rv=document.querySelectorAll('.rv'),reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;

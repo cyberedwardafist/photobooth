@@ -11,7 +11,7 @@ Situs statis di `public/`, API di `api/` (Vercel Functions), data di Supabase.
 1. Unggah folder ini ke repo GitHub (`.env` dan `node_modules` sudah diabaikan lewat `.gitignore`).
 2. Vercel, Add New Project, pilih repo itu. Framework: Other. Kosongkan Build Command dan Output Directory.
 3. Isi Environment Variables (lihat `.env.example`): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER`, `ADMIN_PASS`, `SESSION_SECRET` (minimal 32 karakter acak).
-4. Deploy. Halaman admin ada di `/admin.html`.
+4. Deploy. Halaman admin ada di `/admin`.
 
 ## Panel admin
 Dasbor satu halaman dengan lima menu (`#ringkasan`, `#template`, `#alur`, `#statistik`, `#sistem`):
@@ -33,10 +33,10 @@ Tanpa Supabase: `ADMIN_PASS=sandi npm start` menjalankan `server.js` (data di `d
 - Foto tidak pernah dikirim ke server. Yang dikirim hanya hitungan unduhan.
 
 ## Alur halaman
-1. `foto.html` ambil atau unggah foto.
-2. `adjust.html` atur tiap foto sendiri-sendiri: filter, kecerahan, kontras, saturasi (tanpa frame). Ada tombol "Terapkan ke semua foto".
-3. `edit.html` pilih frame: template dan warna latar.
-4. `unduh.html` galeri semua hasil: frame diam (PNG), frame video, foto satuan (PNG), animasi foto (video), live foto (video). Klik satu hasil untuk memilih apa saja yang diunduh; tiap pilihan jadi file terpisah (tanpa zip).
+1. `foto` ambil atau unggah foto.
+2. `adjust` atur tiap foto sendiri-sendiri: filter, kecerahan, kontras, saturasi (tanpa frame). Ada tombol "Terapkan ke semua foto".
+3. `edit` pilih frame: template dan warna latar.
+4. `unduh` galeri semua hasil: frame diam (PNG), frame video, foto satuan (PNG), animasi foto (video), live foto (video). Klik satu hasil untuk memilih apa saja yang diunduh; tiap pilihan jadi file terpisah (tanpa zip).
 
 Pengaturan per foto disimpan di `sessionStorage` (`adj`), dan otomatis di-reset kalau fotonya diambil ulang.
 
@@ -47,16 +47,16 @@ Saat memotret lewat kamera, `foto.js` merekam klip ±2 detik (320x240, 12 fps) p
 Kalau sudah ada foto, menekan tautan keluar dari alur (Home, logo, Masuk admin) menampilkan konfirmasi; memilih "Ya, keluar" menghapus foto dan klip live (mulai dari awal). Pindah antar langkah (foto, atur foto, frame, unduh) tidak diganggu. Halaman Template (etalase frame) setara dengan Home, jadi pindah ke sana dari tengah alur juga dianggap keluar. Menutup tab, memuat ulang, atau tombol back peramban memakai peringatan bawaan peramban (`beforeunload`), yang teksnya tidak bisa diubah. Logikanya ada di akhir `public/common.js`.
 
 ## Library template
-`template.html` adalah etalase: semua frame tampil dengan foto contoh. Klik satu frame -> pilihan disimpan (`state.frame`) lalu langsung ke `foto.html`; di langkah Pilih frame, frame itu sudah terpilih dan bisa diganti. Tombol "Mulai memotret" di Home dan tombol "tanpa memilih frame" menghapus pilihan itu, jadi alur langsung tidak membawa frame lama.
+`template` adalah etalase: semua frame tampil dengan foto contoh. Klik satu frame -> pilihan disimpan (`state.frame`) lalu langsung ke `foto`; di langkah Pilih frame, frame itu sudah terpilih dan bisa diganti. Tombol "Mulai memotret" di Home dan tombol "tanpa memilih frame" menghapus pilihan itu, jadi alur langsung tidak membawa frame lama.
 
 ## Logo
 `public/logo-mark.svg` (bilik saja, dipakai di navigasi dan sebagai favicon) dan `public/logo.svg` (ilustrasi penuh) berasal dari desain "Ilustrasi Photobooth". Animasinya (lampu berkedip, strip melayang) ikut di dalam SVG dan berhenti otomatis kalau pengguna memilih `prefers-reduced-motion`.
 
 ## Beranda
-`index.html` + `home.js`: hero dengan ilustrasi bilik, deretan frame berjalan (digambar dari `FRAMES` dengan foto contoh, jadi frame baru otomatis ikut tampil), cara kerja, fitur, dan ajakan penutup. Jumlah frame di ringkasan hero juga otomatis dari `FRAMES.length`. Animasi mati bila pengguna memilih kurangi gerakan.
+`index` + `home.js`: hero dengan ilustrasi bilik, deretan frame berjalan (digambar dari `FRAMES` dengan foto contoh, jadi frame baru otomatis ikut tampil), cara kerja, fitur, dan ajakan penutup. Jumlah frame di ringkasan hero juga otomatis dari `FRAMES.length`. Animasi mati bila pengguna memilih kurangi gerakan.
 
 ## Connect
-`connect.html` adalah cangkang ruang: buat ruang (kode acak 6 digit, tidak bisa kembar) atau gabung dengan kode itu. Koneksi WebRTC (PeerJS, server sinyal publik via CDN) dibuat sekali di halaman ini dan tidak putus selama alur, karena halaman foto, atur foto, frame, dan unduh dimuat di dalam `<iframe id="app">`. Halaman di dalam iframe memakai `PBR` (di `common.js`) untuk bicara ke ruang: `pbSync(patch)` menyinkronkan state (`pb_state`) dan `pbEv(nama,data)` mengirim kejadian sesaat (hitung mundur, pilihan latar).
+`connect` adalah cangkang ruang: buat ruang (kode acak 6 digit, tidak bisa kembar) atau gabung dengan kode itu. Koneksi WebRTC (PeerJS, server sinyal publik via CDN) dibuat sekali di halaman ini dan tidak putus selama alur, karena halaman foto, atur foto, frame, dan unduh dimuat di dalam `<iframe id="app">`. Halaman di dalam iframe memakai `PBR` (di `common.js`) untuk bicara ke ruang: `pbSync(patch)` menyinkronkan state (`pb_state`) dan `pbEv(nama,data)` mengirim kejadian sesaat (hitung mundur, pilihan latar).
 - Foto: host yang mengatur (tata letak, ambil foto, ulang, kosongkan, latar). Foto hasil host dikirim ke tamu. Kamera semua peserta digabung dalam satu frame (orang dipotong dengan MediaPipe selfie segmenter, dari CDN). Tamu tidak punya live foto (klip video hanya direkam di perangkat host).
 - Atur foto dan Frame: host dan tamu sama-sama bisa mengubah, perubahan muncul di kedua sisi. Hanya host yang bisa lanjut/kembali, tamu otomatis ikut pindah halaman. Di dua langkah ini kamera semua peserta tampil berdampingan di atas halaman.
 - Unduh: sendiri-sendiri.

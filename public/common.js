@@ -65,10 +65,10 @@ const FLOWGATE=['foto','adjust','edit','unduh','connect'];
 function applySite(){
   if(window!==top)return;/* di dalam ruang Connect, induknya sudah menampilkan ini */
   const pg=pageOf(location),box=(cls,t,sub)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=t;return d};
-  if(!CFG.connect)document.querySelectorAll('a[href="connect.html"]').forEach(a=>a.remove());
+  if(!CFG.connect)document.querySelectorAll('a[href="/connect"]').forEach(a=>a.remove());
   const closed=!CFG.open&&FLOWGATE.includes(pg),noConn=!CFG.connect&&pg==='connect';
   if(closed||noConn){
-    const o=box('pbx','<div class="pbx-card" role="alertdialog" aria-labelledby="pbxT"><img src="logo-mark.svg" alt="" width="34" height="50"><h2 id="pbxT"></h2><p></p><a class="btn" href="index.html">Kembali ke beranda</a></div>');
+    const o=box('pbx','<div class="pbx-card" role="alertdialog" aria-labelledby="pbxT"><img src="logo-mark.svg" alt="" width="34" height="50"><h2 id="pbxT"></h2><p></p><a class="btn" href="/">Kembali ke beranda</a></div>');
     o.querySelector('h2').textContent=closed?'Photobooth sedang tutup':'Connect sedang dimatikan';
     o.querySelector('p').textContent=closed?(CFG.closedMessage||'Coba lagi nanti ya.'):'Fitur foto bareng belum bisa dipakai sekarang. Kamu masih bisa memotret sendiri.';
     if(noConn)o.querySelector('a').textContent='Kembali ke beranda';

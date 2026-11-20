@@ -172,7 +172,7 @@ function leftText(){const ms=D.session.expires-Date.now();if(ms<=0)return 'sudah
 function vSistem(){const e=D.env,local=e.runtime.startsWith('Lokal'),sl=e.secretLen;
   const c=(k,t,x)=>`<li class="${k}">${ic[k]}<div><b>${t}</b><span>${x}</span></div></li>`;
   const sec=local?c('ok','SESSION_SECRET','Tidak dipakai di server lokal.'):sl>=32?c('ok','SESSION_SECRET','Panjangnya '+sl+' karakter.'):sl>=16?c('warn','SESSION_SECRET kurang panjang','Panjangnya '+sl+' karakter. Disarankan minimal 32.'):c('bad','SESSION_SECRET belum diatur','Login admin tidak akan berfungsi tanpa ini.');
-  const pages=[['Beranda','index.html'],['Library template','template.html'],['Ambil foto','foto.html'],['Atur foto','adjust.html'],['Pilih frame','edit.html'],['Unduh hasil','unduh.html'],['Connect','connect.html']];
+  const pages=[['Beranda','/'],['Library template','/template'],['Ambil foto','/foto'],['Atur foto','/adjust'],['Pilih frame','/edit'],['Unduh hasil','/unduh'],['Connect','/connect']];
   return head('Sistem',ROUTES.sistem[2],`<button class="btn" type="button" data-act="backup">${ic.dl}Unduh cadangan</button>`)+`<div class="cols2"><div class="stack">
   <section class="card"><div class="ch"><div><h2>Pemeriksaan</h2><p>Dijalankan di ${esc(e.runtime)}.</p></div></div><ul class="checks">
     ${c('ok','Database terhubung','Data dasbor ini dibaca langsung dari database.')}

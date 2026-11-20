@@ -25,7 +25,7 @@ function onApp(d){if(d.k==='big'){const b=bufs.get(d.id)||{n:d.n,p:[],c:0};b.p[d
   const h=PBC.hook||{};
   if(d.k==='state'){setState(d.patch);h.sync&&h.sync(d.patch)}
   else if(d.k==='ev')h.ev&&h.ev(d.name,d.data);
-  else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src=d.page+'.html'}}
+  else if(d.k==='nav'&&info.role==='guest'&&PAGES.includes(d.page)&&d.page!==page){page=d.page;$('#app').src='/'+d.page}}
 let fitFn=null;const fitH=()=>{const f=$('#app');if(!fitFn)return;if(innerWidth<=820)f.style.height=Math.max(innerHeight-70,520)+'px';else fitFn()};addEventListener('resize',fitH);
 function onLoad(){const f=$('#app'),w=f.contentWindow;let p;try{p=pageOf(new URL(w.location.href))}catch{return}
   page=p;csave();$('#vc').hidden=!['adjust','edit'].includes(p);if(!$('#vc').hidden)$('#vc').querySelectorAll('video').forEach(v=>v.play().catch(()=>{}));w.addEventListener('pagehide',()=>{PBC.hook={}});
@@ -33,7 +33,7 @@ function onLoad(){const f=$('#app'),w=f.contentWindow;let p;try{p=pageOf(new URL
   if(info.role==='host')room.bcast({k:'nav',page:p})}
 function runRoom(resume){if(started)return;started=true;if(resume!==true){try{sessionStorage.removeItem(KEY)}catch{}clipClear().catch(()=>{});page='foto'}csave();
   Object.assign(PBC,{role:info.role,stream});$('#cwrap').hidden=true;$('#vRun').hidden=false;
-  fill($('#vc'),room);const f=$('#app');f.addEventListener('load',onLoad);f.src=page+'.html'}
+  fill($('#vc'),room);const f=$('#app');f.addEventListener('load',onLoad);f.src='/'+page}
 async function enter(role,code,name,sv){$('#err').textContent='';if(!await cam())return;
   info={role,code,name,fresh:!sv};
   room=await openRoom({...info,started:!!(sv&&sv.started)},stream,{onChange:draw,onApp,onStart:()=>runRoom(),
@@ -44,7 +44,7 @@ $('#mk').onclick=()=>enter('host',rand6(),nm($('#nameA').value));
 $('#jn').onclick=()=>{const c=$('#code').value.trim();if(!/^\d{6}$/.test(c)){$('#err').textContent='Kode harus 6 angka.';return}enter('guest',c,nm($('#nameB').value))};
 $('#code').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
 $('#go').onclick=()=>{room.started=true;room.start();runRoom()};
-const bye=async()=>{pbSkip();cclear();if(room)room.leave();try{sessionStorage.removeItem(KEY)}catch{}try{await clipClear()}catch{}if(stream)stream.getTracks().forEach(t=>t.stop());location.href='connect.html'};
+const bye=async()=>{pbSkip();cclear();if(room)room.leave();try{sessionStorage.removeItem(KEY)}catch{}try{await clipClear()}catch{}if(stream)stream.getTracks().forEach(t=>t.stop());location.href='/connect'};
 $('#lv').onclick=()=>{if(started&&!confirm('Keluar dari ruang? Foto yang sudah diambil akan hilang.'))return;bye()};
 $('#copy').onclick=async()=>{const b=$('#copy');try{await navigator.clipboard.writeText(room.code)}catch{}b.textContent='Tersalin';setTimeout(()=>{b.textContent='Salin kode'},1600)};
 

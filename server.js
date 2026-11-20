@@ -70,6 +70,7 @@ app.delete('/api/admin/templates/:id', auth, (req, res) => {
   const d = load(); d.templates = d.templates.filter(x => x.id !== req.params.id); save(d); res.json(view(req, d));
 });
 
+app.get(/^\/(.+)\.html$/, (req, res) => res.redirect(301, req.params[0] === 'index' ? '/' : '/' + req.params[0]));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 app.listen(PORT, () => console.log(`photobooth berjalan di http://localhost:${PORT}`));
